@@ -1,4 +1,4 @@
-import { IVerifier } from "../interfaces/verifier";
+import type { IVerifier } from "../interfaces/verifier";
 
 /**
  * A simple verifier that returns true if data is truthy for integration testing purposes
@@ -7,7 +7,7 @@ import { IVerifier } from "../interfaces/verifier";
 export class StupidVerifier implements IVerifier {
   name = "stupid";
 
-  async verify(address: string, data?: any): Promise<boolean> {
+  async verify(address: string, data?: unknown): Promise<boolean> {
     return !!data;
   }
 }

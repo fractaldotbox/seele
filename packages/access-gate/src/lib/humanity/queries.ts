@@ -1,0 +1,48 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+const HUMANITY_API_KEY = process.env.HUMANITY_API_KEY as string;
+
+export const issueCredentials = async (
+  address: string,
+  claims: Record<string, unknown>,
+) => {
+  const response = await fetch(
+    "https://issuer.humanity.org/credentials/issue",
+    {
+      method: "POST",
+      headers: {
+        "X-API-Token": HUMANITY_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subject_address: address,
+        claims,
+      }),
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+};
+
+export const verifyCredentials = async (credential: object) => {
+  const response = await fetch(
+    "https://issuer.humanity.org/credentials/verify",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Token": HUMANITY_API_KEY,
+      },
+      body: JSON.stringify({
+        credential,
+      }),
+    },
+  );
+
+  const data = await response.text();
+
+  return data;
+};

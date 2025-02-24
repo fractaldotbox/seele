@@ -5,7 +5,7 @@ export interface IVerifier {
    * @param data Optional additional data needed for verification
    * @returns Promise that resolves to true if verification passes, false otherwise
    */
-  verify(address: string, data?: any): Promise<boolean>;
+  verify(address: string, data?: unknown): Promise<boolean>;
 
   /**
    * The name of the verifier

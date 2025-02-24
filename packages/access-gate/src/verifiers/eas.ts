@@ -1,7 +1,8 @@
-import { IVerifier } from "../interfaces/verifier";
-import { Permissions } from "../lib/eas/constants";
-import { getEasDataByChain, SupportedChains } from "../lib/eas/utils";
-import { GraphQLClient, rawRequest } from "graphql-request";
+import type { IVerifier } from "../interfaces/verifier";
+import type { Permissions } from "../lib/eas/constants";
+import { getEasDataByChain } from "../lib/eas/utils";
+import type { SupportedChains } from "../lib/eas/utils";
+import { rawRequest } from "graphql-request";
 import { GetAttestationByParams } from "../lib/eas/queries";
 // interfaces
 interface EASAttestedByMemberVerifierMetadata {

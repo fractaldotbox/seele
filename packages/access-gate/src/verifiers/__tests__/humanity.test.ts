@@ -42,8 +42,8 @@ const sampleCredential = {
   },
 };
 
-describe.skip("Humanity Protocol KYC Verifier", () => {
-  it("issue credentials", async () => {
+describe("Humanity Protocol KYC Verifier", () => {
+  it.skip("issue credentials", async () => {
     const data = await issueCredentials(
       "0x6e3eAffd3643dB8FfBE5973A4Ccf64F2F9AA9cfd",
       {
@@ -57,8 +57,19 @@ describe.skip("Humanity Protocol KYC Verifier", () => {
   });
 
   it("should verify that the person is a KYC-ed human according to humanity protocol", async () => {
-    const data = await verifyCredentials(sampleCredential.credential);
+    const { message, credential } = await issueCredentials(
+      "0x0fa4adf7830a048c285e981ba5d57c51604c917f",
+      {
+        kyc: "passed",
+        age: 17,
+        nationality: "US",
+      },
+    );
+
+    console.log(credential);
+
+    const data = await verifyCredentials(credential);
 
     console.log(data);
-  }, 60_000);
+  }, 120000);
 });

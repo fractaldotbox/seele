@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@ensdomains/ensjs": "^4.0.2",
+    "dotenv": "^16.4.7",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "viem": "^2.23.5"

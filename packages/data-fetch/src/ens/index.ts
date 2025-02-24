@@ -1,1 +1,1 @@
-export * from "./eas";
+export * from "./ens";

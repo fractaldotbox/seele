@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getSocialsFromEns } from "../ens";
+import {
+  getInfluentialEnsTwitters,
+  getSocialsFromEns,
+  getTop200EnsSocials,
+} from "../ens";
 
 describe("ENS Social Records", () => {
   it("should fetch social records for a valid ENS name", async () => {
@@ -10,5 +14,15 @@ describe("ENS Social Records", () => {
       twitter: "VitalikButerin",
       github: "vbuterin",
     });
+  });
+
+  it("should fetch social records for the top 200 ENS names", async () => {
+    const data = await getTop200EnsSocials();
+    console.log(data);
+  });
+
+  it("should fetch social records for the influential ENS names", async () => {
+    const data = await getInfluentialEnsTwitters();
+    console.log(data);
   });
 });

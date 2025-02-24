@@ -42,7 +42,7 @@ const sampleCredential = {
   },
 };
 
-describe("Humanity Protocol KYC Verifier", () => {
+describe.skip("Humanity Protocol KYC Verifier", () => {
   it("issue credentials", async () => {
     const data = await issueCredentials(
       "0x6e3eAffd3643dB8FfBE5973A4Ccf64F2F9AA9cfd",

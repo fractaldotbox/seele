@@ -1,79 +1,76 @@
 "use client";
 
-import { injected, useAccount, useWalletClient } from "wagmi";
 import { useEffect, useState } from "react";
-import { baseSepolia } from "viem/chains";
-import { useAttestation } from "../hooks/use-attestation";
-import type { Account } from "viem";
-import { VotingForm } from "@/components/attestations/voting-form";
 import { ComparisonFrame } from "@/components/comparison/comparison-frame";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
-
-  const { signAttestation } = useAttestation({
-    account: walletClient ? walletClient.account : ({ address } as Account),
-    chain: baseSepolia,
-    isOffchain: false,
-    schemaId:
-      "0xd8c63320a5a3d4ee26fe3d9534eada663e361b5dabb0917be97cd476106142d5",
-    schemaString: "string voteFor",
-  });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return null; // or a loading skeleton that matches server-side render
+    return null;
   }
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full">
-        {/* comparison section */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ComparisonFrame
-            src="https://ipfs.io/ipfs/bafybeib4xjovq435ai247f73h6dkrwe7mhmoormjcluirf47e3yld52ijy/"
-            title="Base Website"
-            caption="Base: The low-cost, developer-friendly home for Ethereum apps"
-          />
-          <ComparisonFrame
-            src="https://attest.org"
-            title="Ethereum Website"
-            caption="Ethereum Attestation Service: On-chain verifiable claims"
-          />
+      <main className="flex flex-col gap-8 row-start-2 items-center w-full max-w-6xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-4 text-foreground">
+            Seele Protocol
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Giving DAOs a soul through AI-powered content generation and
+            representation
+          </p>
         </div>
 
-        <VotingForm
-          chainId={baseSepolia.id}
-          isOffchain={false}
-          signAttestation={async (data: string) => {
-            if (!walletClient || !address) {
-              console.error("No wallet client found");
-              return;
-            }
+        {/* Feature Highlights */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-12">
+          <Card>
+            <CardHeader>
+              <h3 className="text-xl font-semibold">AI Voice</h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Autonomous content generation aligned with DAO values and
+                objectives
+              </p>
+            </CardContent>
+          </Card>
 
-            console.log({ data });
+          <Card>
+            <CardHeader>
+              <h3 className="text-xl font-semibold">DAO Representation</h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Authentic digital presence reflecting the collective identity
+              </p>
+            </CardContent>
+          </Card>
 
-            await signAttestation({
-              recipient: address,
-              data: [
-                {
-                  name: "voteFor",
-                  type: "string",
-                  value: data,
-                },
-              ],
-              time: BigInt(Date.now()),
-              salt: "0x",
-              revocable: false,
-              value: BigInt(0),
-            });
-          }}
-        />
+          <Card>
+            <CardHeader>
+              <h3 className="text-xl font-semibold">Web3 Integration</h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Seamless blockchain integration for transparent governance
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center mt-12">
+          <Button size="lg">Start Empowering Your DAO</Button>
+        </div>
       </main>
     </div>
   );

@@ -1,7 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { Agent, createAgent } from "@statelyai/agent";
 import OpenAI from "openai";
-import { send } from "process";
 import { createActor, createMachine, fromPromise, waitFor } from "xstate";
 import type { z } from "zod";
 import { agentParamsCurator, crawlNewsWithTopic } from "./agents/curator";

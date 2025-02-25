@@ -1,4 +1,3 @@
-import { truncateSync } from "fs";
 import { openai } from "@ai-sdk/openai";
 import { createAgent } from "@statelyai/agent";
 import { describe, expect, it, vi } from "vitest";

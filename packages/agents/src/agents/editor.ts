@@ -121,28 +121,3 @@ export const planNewsDirection =
 
 		return results;
 	};
-
-// export const planNewsDirection = async (news: string[]) => {
-
-//     try {
-//         const completion = await openai.beta.chat.completions.parse({
-//             model: "gpt-4o",
-//             messages: [
-//                 {
-//                     role: "system", content:
-//                         systemPrompt
-//                 },
-//                 { role: "user", content: createPromptArticlePlanCreate(news) },
-//             ],
-
-//             response_format: zodResponseFormat(ArticlePlan, "plan"),
-//         });
-
-//         console.log(completion.choices?.[0].message?.content)
-
-//         // const event = completion.choices[0].message.parsed;
-
-//     } catch (error) {
-//         console.error("Error during OpenAI API call:", error);
-//     }
-// }

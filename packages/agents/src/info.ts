@@ -1,4 +1,2 @@
 // unify polymarket / news item etc
-export type InfoItem = {
-
-}
+export type InfoItem = {};

@@ -3,9 +3,8 @@
 
 import { createStorage } from "unstorage";
 
-
 export const initStorage = () => {
-    const storage = createStorage(/* opts */);
+	const storage = createStorage(/* opts */);
 
-    return storage;
-}
+	return storage;
+};

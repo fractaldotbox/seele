@@ -1,184 +1,170 @@
-import OpenAI from "openai";
-import { z } from "zod";
+import { openai } from "@ai-sdk/openai";
 import { Agent, createAgent } from "@statelyai/agent";
-import { createActor, createMachine, fromPromise, waitFor } from 'xstate';
-import { openai } from '@ai-sdk/openai';
+import OpenAI from "openai";
 import { send } from "process";
-import { agentParams, createPlanResearchAgentParams, NewsPlan } from "./planner";
+import { createActor, createMachine, fromPromise, waitFor } from "xstate";
+import type { z } from "zod";
+import { agentParamsCurator, crawlNewsWithTopic } from "./agents/curator";
+import {
+	ArticlePlan,
+	type NewsFeedItem,
+	agentParamsEditor,
+	createPlannerAgentParams,
+	planNewsDirection,
+} from "./agents/editor";
 import { initStorage } from "./storage";
-import { crawlNewsWithTopic, findAll } from "./agenda-agent";
 
-import { generateObject } from 'ai';
+import { generateObject } from "ai";
+import { writeArticle } from "./agents/author";
+import { factCheckWithRAG } from "./agents/fact-checker";
+import {
+	type ResearchResult,
+	agentParamsResearcher,
+	researchWithWeb,
+} from "./agents/researcher";
+import { newsAgencyMachine } from "./news-state";
 import { generateObjectWithAgent } from "./utils";
 
-
-
 const mountObservability = (agent) => {
-    agent.onMessage((message: string) => {
-        console.log('=== Agent messages === ')
+	agent.onMessage((message: string) => {
+		console.log("=== Agent messages === ");
 
-        console.log('message', JSON.stringify(message));
-        console.log('message', JSON.stringify(message?.result?.response?.messages))
-    });
-}
-
+		console.log("message", JSON.stringify(message));
+		console.log("message", JSON.stringify(message?.result?.response?.messages));
+	});
+};
 
 export const baristaMachine = createMachine({
-    initial: 'idle',
-    states: {
-        idle: {
-            on: {
-                'barista.makeDrink': {
-                    actions: ({ event }) => console.log(event.text),
-                    target: 'makingDrink',
-                },
-            },
+	initial: "idle",
+	states: {
+		idle: {
+			on: {
+				"barista.makeDrink": {
+					actions: ({ event }) => console.log(event.text),
+					target: "makingDrink",
+				},
+			},
 
-            entry: () => {
-                console.log('idle')
-            }
-        },
-        makingDrink: {
-            on: {
-                'barista.drinkMade': 'idle',
-            },
-            entry: ({ event }) => {
-                console.log('!!! makingDrink now', event)
-            }
-        },
-    },
+			entry: () => {
+				console.log("idle");
+			},
+		},
+		makingDrink: {
+			on: {
+				"barista.drinkMade": "idle",
+			},
+			entry: ({ event }) => {
+				console.log("!!! makingDrink now", event);
+			},
+		},
+	},
 });
 
-
+/**
+ * Put the dependency inside state machine whenever possible
+ * While agent action are functional for composability and testability
+ */
 
 export const start = async () => {
+	const TOPICS_ETH = [
+		"Ethereum Research",
+		"Ethereum Community news",
+		"Devconnect",
+		"pre-confirmations",
+	];
 
-    const TOPICS_ETH = [
-        'Ethereum Research',
-        'Ethereum Community news',
-        'Devconnect',
-        'pre-confirmations'
-    ]
+	const agentCurator = createAgent(agentParamsCurator);
+	const agentEditor = createAgent(agentParamsEditor);
 
-    const agent = createAgent(agentParams);
-    mountObservability(agent);
-    const newsActor = createActor(newsMachine);
-    newsActor.start();
+	const agentResearcher = createAgent(agentParamsResearcher);
+	const agentAuthor = createAgent(agentParamsAuthor);
 
-    // Go manual, do not interact until spawn news actor
+	const agentFactChecker = createAgent(agentParamsFactChecker);
 
-    const storage = initStorage();
-    await crawlNewsWithTopic(TOPICS_ETH, storage)
+	mountObservability(agentCurator);
+	mountObservability(agentEditor);
+	mountObservability(agentResearcher);
+	mountObservability(agentFactChecker);
 
-    const keys = await storage.getKeys()
+	const newsActor = createActor(newsAgencyMachine);
+	newsActor.start();
 
-    console.log('keys', keys)
-    const items = await storage.getItems(keys)
-    console.log('items', items);
+	// Go manual, do not interact until spawn news actor
 
-    const news = items.map(({ value }) => value);
+	const storage = initStorage();
+	await crawlNewsWithTopic(TOPICS_ETH, storage);
 
-    newsActor.send({
-        type: 'news.createPlan',
-        news: items.map(({ value }) => value)
-    })
+	const keys = await storage.getKeys();
 
-    const results = await generateObjectWithAgent(agent, createPlanResearchAgentParams(news));
+	console.log("keys", keys);
+	const items = await storage.getItems<NewsFeedItem>(keys);
+	console.log("items", items);
 
+	const news = items.map(({ value }) => value);
 
-    const articles = results?.articles || [];
+	newsActor.send({
+		type: "news.createPlan",
+		news: items.map(({ value }) => value),
+	});
 
+	const planResults = await planNewsDirection(agentEditor)(news);
 
-    console.log('results', results)
+	/**
+	 * Given the plan, researcher research the internet
+	 */
 
-    //@ts-ignore
-    // agent.interact(newsActor, (observed) => {
-    //     console.log('observed')
-    //     console.log(observed.state.value)
+	for (const articlePlan of planResults?.articlePlans) {
+		console.log("articlePlan", articlePlan);
 
+		const researchResult: z.infer<typeof ResearchResult> =
+			await researchWithWeb(agentResearcher)({
+				...articlePlan,
+			});
 
-    //     // const { nextEvent } = plan!;
+		console.log("researchResult", researchResult);
 
-    //     console.log(agent.getPlans())
+		const article = await writeArticle(agentAuthor)({
+			topic: articlePlan.topic,
+			editorialDirection: articlePlan.editorialDirection,
+			researchContext: researchResult,
+		});
 
+		const factCheckResults = await factCheckWithRAG(agentFactChecker)(
+			article,
+			storage,
+		);
 
-    //     // set goal not nextEvent
+		// TODO into state machine
 
-    //     // default do nothing
-    //     return {
-    //         // goal: 'make a latte',
-    //         goal: 'create news plan'
-    //     }
-    // });
+		// factCheckWithRAG(agentFactChecker)()
+	}
 
+	// persist first, decoupled
 
+	// fact check
 
-    return {
-        agent,
-        actor: newsActor
-    }
-}
+	// council review
 
+	//@ts-ignore
+	// agent.interact(newsActor, (observed) => {
+	//     console.log('observed')
+	//     console.log(observed.state.value)
 
-export const startBarista = async () => {
+	//     // const { nextEvent } = plan!;
 
+	//     console.log(agent.getPlans())
 
-    const agent = createAgent({
-        name: 'barista',
-        model: openai('gpt-4-turbo'),
-        events: {
-            'barista.makeDrink': z
-                .object({
-                    drink: z.enum(['espresso', 'latte', 'cappuccino']),
-                })
-                .describe('Makes a drink'),
-        },
-    });
+	//     // set goal not nextEvent
 
+	//     // default do nothing
+	//     return {
+	//         // goal: 'make a latte',
+	//         goal: 'create news plan'
+	//     }
+	// });
 
-    mountObservability(agent);
-
-
-    const observations = await agent.getObservations();
-
-    console.log('observations', observations
-
-    )
-
-    const actor = createActor(baristaMachine);
-
-
-
-    //@ts-ignore
-    agent.interact(actor, (observed) => {
-        console.log('observed')
-        console.log(observed.state.value)
-        // const plan = await handleOrder('I want a latte please', { value: 'idle' });
-
-
-        // const { nextEvent } = plan!;
-
-        console.log(agent.getPlans())
-
-
-        // set goal not nextEvent
-
-        // default do nothing
-        return {
-            goal: 'make a latte'
-        }
-    });
-
-
-
-    actor.start();
-
-
-    return {
-        agent,
-        actor
-    }
-
-    // delegate
-
-}
+	// return {
+	//     agent,
+	//     actor: newsActor
+	// }
+};

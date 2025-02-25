@@ -5,9 +5,9 @@ import type { IVerifier } from "../interfaces/verifier";
  * @implements {IVerifier}
  */
 export class StupidVerifier implements IVerifier {
-  name = "stupid";
+	name = "stupid";
 
-  async verify(address: string, data?: unknown): Promise<boolean> {
-    return !!data;
-  }
+	async verify(address: string, data?: unknown): Promise<boolean> {
+		return !!data;
+	}
 }

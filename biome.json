@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["./packages/agents/src/fixture/twitter/*.json"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -22,9 +22,9 @@
 			"recommended": true,
 			"style": {
 				"noNonNullAssertion": "off"
-			  },
+			},
 			"suspicious": {
-				"noExplicitAny": "off",
+				"noExplicitAny": "off"
 			}
 		}
 	},

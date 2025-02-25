@@ -36,14 +36,20 @@ export default function Home() {
         {/* comparison section */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
           <ComparisonFrame
-            src="https://ipfs.io/ipfs/bafybeib4xjovq435ai247f73h6dkrwe7mhmoormjcluirf47e3yld52ijy/"
-            title="Base Website"
-            caption="Base: The low-cost, developer-friendly home for Ethereum apps"
+            title="Version A"
+            caption="More chill version"
+            content={`
+            # Base Website
+            Base is a low-cost, developer-friendly home for Ethereum apps.
+            `}
           />
           <ComparisonFrame
-            src="https://attest.org"
-            title="Ethereum Website"
-            caption="Ethereum Attestation Service: On-chain verifiable claims"
+            title="Version B"
+            caption="More serious version"
+            content={`
+            # Ethereum Website
+            Ethereum is a global, open-source platform for decentralized applications.
+            `}
           />
         </div>
 

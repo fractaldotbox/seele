@@ -1,20 +1,27 @@
+import ReactMarkdown from "react-markdown";
+
 interface ComparisonFrameProps {
-  src: string;
+  content: string;
   title: string;
   caption: string;
 }
 
-export function ComparisonFrame({ src, title, caption }: ComparisonFrameProps) {
+export function ComparisonFrame({
+  content,
+  title,
+  caption,
+}: ComparisonFrameProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 max-2xl:w-full">
+      <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-200 text-center">
+        {title}
+      </h1>
       <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
         {caption}
       </p>
-      <iframe
-        src={src}
-        className="w-full h-[600px] border border-gray-200 rounded-lg"
-        title={title}
-      />
+      <article className="prose dark:prose-invert">
+        <ReactMarkdown>{content}</ReactMarkdown>
+      </article>
     </div>
   );
 }

@@ -46,3 +46,22 @@ export const verifyCredentials = async (credential: object) => {
 
   return data;
 };
+
+export const listCredentials = async (address: string) => {
+  const response = await fetch(
+    `https://issuer.humanity.org/credentials/list?holderDid=did:ethr:${address}`,
+    {
+      method: "GET",
+      headers: {
+        "X-API-Token": HUMANITY_API_KEY,
+      },
+    },
+  );
+
+  const data = await response.json();
+
+  console.log(data);
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  return (data.credentials.data as any[]) || [];
+};

@@ -16,13 +16,6 @@ import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
 import { getEasscanAttestationUrl } from "@/lib/eas/easscan";
 import { getShortHex } from "@/lib/utils/hex";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // TODO dynamic enough to generate fields
 // now focus on sdk part
@@ -75,11 +68,11 @@ export const VotingForm = ({
   }
 
   return (
-    <Card className="pt-8">
+    <Card className="pt-8 w-full">
       <CardContent>
         <Form {...form}>
           {/* HARDCODED */}
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form className="space-y-8">
             <FormField
               control={form.control}
               name="voteFor"
@@ -87,25 +80,34 @@ export const VotingForm = ({
                 <FormItem>
                   <FormLabel>Cast Your Vote</FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select an AI model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="left">Left</SelectItem>
-                        <SelectItem value="right">Right</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-4 w-full">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          field.onChange("left");
+                          form.handleSubmit(onSubmit)();
+                        }}
+                        className="flex-1"
+                      >
+                        Version A ⬅️
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          field.onChange("right");
+                          form.handleSubmit(onSubmit)();
+                        }}
+                        className="flex-1"
+                      >
+                        Version B ➡️
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormDescription>Vote for your ideal version</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
           </form>
         </Form>
       </CardContent>

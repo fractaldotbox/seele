@@ -1,9 +1,5 @@
-import {
-  issueCredentials,
-  verifyCredentials,
-} from "../../lib/humanity/queries";
-import { HumanityProtocolKYCVerifier } from "../humanity";
-import { describe, it, expect, beforeAll } from "vitest";
+import { HumanityProtocolVerifier } from "../humanity";
+import { describe, it, expect } from "vitest";
 
 const sampleCredential = {
   message: "Credential issued successfully",
@@ -42,34 +38,24 @@ const sampleCredential = {
   },
 };
 
-describe("Humanity Protocol KYC Verifier", () => {
-  it.skip("issue credentials", async () => {
-    const data = await issueCredentials(
-      "0x6e3eAffd3643dB8FfBE5973A4Ccf64F2F9AA9cfd",
-      {
-        kyc: "passed",
-        age: 17,
-        nationality: "US",
-      },
-    );
-
-    console.log(data);
-  });
-
+describe("Humanity Protocol Human + Age Verification", () => {
   it("should verify that the person is a KYC-ed human according to humanity protocol", async () => {
-    const { message, credential } = await issueCredentials(
+    const verifier = new HumanityProtocolVerifier();
+
+    const isValid = await verifier.verify(
       "0x0fa4adf7830a048c285e981ba5d57c51604c917f",
-      {
-        kyc: "passed",
-        age: 17,
-        nationality: "US",
-      },
     );
 
-    console.log(credential);
+    expect(isValid).toBe(true);
+  }, 120_000);
 
-    const data = await verifyCredentials(credential);
+  it("should verify that the person is not a KYC-ed human according to humanity protocol", async () => {
+    const verifier = new HumanityProtocolVerifier();
 
-    console.log(data);
-  }, 120000);
+    const isValid = await verifier.verify(
+      "0x0b63a6E23eE003A5A1B7a7334FFA12C61CC2Aa9b",
+    );
+
+    expect(isValid).toBe(false);
+  }, 120_000);
 });

@@ -15,11 +15,25 @@ export const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
-              AI Model Voting
+              Seele{" "}
             </Link>
           </div>
 
           <div className="flex items-center gap-4">
+            <div className="flex space-x-4 mr-4">
+              <Link
+                href="/arena"
+                className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              >
+                Arena
+              </Link>
+              <Link
+                href="/cms"
+                className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              >
+                CMS
+              </Link>
+            </div>
             {isAuthenticated ? (
               <>
                 {address && (

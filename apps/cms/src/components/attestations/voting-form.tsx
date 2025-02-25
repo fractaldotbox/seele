@@ -16,6 +16,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
 import { getEasscanAttestationUrl } from "@/lib/eas/easscan";
 import { getShortHex } from "@/lib/utils/hex";
+import type { Address } from "viem";
 
 // TODO dynamic enough to generate fields
 // now focus on sdk part
@@ -23,7 +24,11 @@ import { getShortHex } from "@/lib/utils/hex";
 export interface VotingFormParams {
   chainId: number;
   isOffchain: boolean;
-  signAttestation: (data: string) => Promise<any>;
+  signAttestation: (data: string) => Promise<{
+    uids: Address[];
+    txnReceipt: { transactionHash: `0x${string}` };
+  }>;
+  isDisabled?: boolean;
 }
 
 // TODO dynamic schema. For now, hardcode the MetIRL
@@ -32,6 +37,7 @@ export const VotingForm = ({
   chainId,
   isOffchain,
   signAttestation,
+  isDisabled,
 }: VotingFormParams) => {
   const formSchema = z.object({
     voteFor: z.string(),
@@ -45,26 +51,34 @@ export const VotingForm = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    signAttestation(values.voteFor).then(({ uids, txnReceipt }: any) => {
-      const [uid] = uids;
-      const url = getEasscanAttestationUrl(chainId, uid, isOffchain);
+    signAttestation(values.voteFor).then(
+      ({
+        uids,
+        txnReceipt,
+      }: {
+        uids: Address[];
+        txnReceipt: { transactionHash: `0x${string}` };
+      }) => {
+        const [uid] = uids;
+        const url = getEasscanAttestationUrl(chainId, uid, isOffchain);
 
-      const description = isOffchain
-        ? getShortHex(uid)
-        : `attested ${txnReceipt?.transactionHash}`;
+        const description = isOffchain
+          ? getShortHex(uid)
+          : `attested ${txnReceipt?.transactionHash}`;
 
-      toast({
-        title: "Voting success",
-        description,
-        action: (
-          <ToastAction altText="View on EASSCAN">
-            <a target="_blank" href={url}>
-              View on EASSCAN
-            </a>
-          </ToastAction>
-        ),
-      });
-    });
+        toast({
+          title: "Voting success",
+          description,
+          action: (
+            <ToastAction altText="View on EASSCAN">
+              <a target="_blank" href={url} rel="noreferrer">
+                View on EASSCAN
+              </a>
+            </ToastAction>
+          ),
+        });
+      },
+    );
   }
 
   return (
@@ -88,6 +102,7 @@ export const VotingForm = ({
                           form.handleSubmit(onSubmit)();
                         }}
                         className="flex-1"
+                        disabled={isDisabled}
                       >
                         Version A ⬅️
                       </Button>
@@ -98,6 +113,7 @@ export const VotingForm = ({
                           form.handleSubmit(onSubmit)();
                         }}
                         className="flex-1"
+                        disabled={isDisabled}
                       >
                         Version B ➡️
                       </Button>

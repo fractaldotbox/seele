@@ -1,10 +1,10 @@
 "use client";
 
-import { injected, useAccount, useWalletClient } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 import { useEffect, useState } from "react";
 import { baseSepolia } from "viem/chains";
 import { useAttestation } from "../../hooks/use-attestation";
-import type { Account } from "viem";
+import type { Account, Address } from "viem";
 import { VotingForm } from "@/components/attestations/voting-form";
 import { ComparisonFrame } from "@/components/comparison/comparison-frame";
 
@@ -56,16 +56,17 @@ export default function Home() {
         <VotingForm
           chainId={baseSepolia.id}
           isOffchain={false}
-          signAttestation={async (data: string) => {
-            if (!walletClient || !address) {
-              console.error("No wallet client found");
-              return;
-            }
-
-            console.log({ data });
-
-            await signAttestation({
-              recipient: address,
+          isDisabled={!walletClient || !address}
+          signAttestation={async (
+            data: string,
+          ): Promise<{
+            uids: Address[];
+            txnReceipt: {
+              transactionHash: `0x${string}`;
+            };
+          }> => {
+            const result = await signAttestation({
+              recipient: address as Address,
               data: [
                 {
                   name: "voteFor",
@@ -78,6 +79,13 @@ export default function Home() {
               revocable: false,
               value: BigInt(0),
             });
+
+            return result as {
+              uids: Address[];
+              txnReceipt: {
+                transactionHash: `0x${string}`;
+              };
+            };
           }}
         />
       </main>

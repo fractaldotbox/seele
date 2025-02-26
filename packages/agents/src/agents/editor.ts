@@ -42,8 +42,7 @@ Example output:
 
 
 
-`
-
+`;
 
 const createPromptArticlePlanCreate = (news: string[]) => `
 Today's date is ${new Date().toLocaleDateString("en-GB")}
@@ -109,10 +108,12 @@ export const ArticlePlan = z.object({
 });
 export const EditArticleResult = z.object({
 	article: z.string().describe("Edited article"),
-	footnote: z.string().describe("Footnote to mention modifications made, acknowledge and summarize reviews from the reviewers"),
-
+	footnote: z
+		.string()
+		.describe(
+			"Footnote to mention modifications made, acknowledge and summarize reviews from the reviewers",
+		),
 });
-
 
 export const agentParamsEditor = {
 	name: "planner",
@@ -153,26 +154,19 @@ export const planNewsDirection =
 		return results;
 	};
 
+export const editArticleWithFootnote =
+	(agent: Agent<any, any>) => async (article: string, reviews: string[]) => {
+		const prompt = createPromptEditArticle(article, reviews);
 
-export const editArticleWithFootnote = (agent: Agent<any, any>) => async (article: string, reviews: string[]) => {
-
-	const prompt = createPromptEditArticle(article, reviews);
-
-	const results = await generateObjectWithAgent(
-		agent,
-		{
+		const results = await generateObjectWithAgent(agent, {
 			schema: EditArticleResult,
 			prompt,
-		}
+		});
 
-	)
-
-	return results
-}
-
+		return results;
+	};
 
 export const createEditParams = (article: string, reviews: string[]) => {
-
 	const prompt = createPromptEditArticle(article, reviews);
 	return {
 		system: systemPrompt,

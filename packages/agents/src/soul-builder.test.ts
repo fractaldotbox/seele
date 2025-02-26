@@ -1,8 +1,8 @@
 import _ from "lodash";
 import type { Storage } from "unstorage";
 import { beforeAll, describe, expect, it } from "vitest";
-import { initStorage } from "./storage";
 import { buildSoul, summarizePersonality } from "./soul-builder";
+import { initStorage } from "./storage";
 
 export type TweetItem = any;
 
@@ -14,7 +14,6 @@ const loadTweets = async (storage: Storage) => {
 	const fixtures = await import.meta.glob(`./fixture/twitter/*.json`);
 
 	for (const path in fixtures) {
-
 		const data = (await fixtures[path]())?.default;
 
 		await storage.setItems(

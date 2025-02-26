@@ -59,14 +59,14 @@ Nonetheless, the EF’s Ansgar Dietrichs noted that the rollup-centric roadmap E
 "Looking back, I'm pretty certain that on our own, we would have never been able to make this much progress in such a timeframe," Dietrichs said. "The parallel exploration of the design space by multiple teams has been enormously beneficial. It is easy to forget about that when focusing on the (real!) challenges this approach created (e.g. around interoperability and fractured UX)."
 
 `;
-			const results = await editArticleWithFootnote(agent)(
-				article,
-				["This article lacks detailed analysis on the market impact and regulatory responses to the launch of $TRUMP. Reviewed by vitalik.eth"],
-			)
+			const results = await editArticleWithFootnote(agent)(article, [
+				"This article lacks detailed analysis on the market impact and regulatory responses to the launch of $TRUMP. Reviewed by vitalik.eth",
+				"This article is great as it mentioned the long-term potential of Ethereum. Reviewed by cz",
+			]);
 
 			expect(results.footnote).toBeDefined();
 
-			console.log('rewrite results', results)
+			console.log("rewrite results", results);
 		});
 	},
 	60 * 1000,

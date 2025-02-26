@@ -7,6 +7,8 @@ interface AddItemInputProps {
   value: string;
   onChange: (value: string) => void;
   onAdd: () => void;
+  disabled?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const AddItemInput = ({
@@ -14,22 +16,27 @@ export const AddItemInput = ({
   value,
   onChange,
   onAdd,
-}: AddItemInputProps) => (
-  <div className="flex items-center gap-4">
-    <Input
-      type="text"
-      placeholder={placeholder}
-      className="w-full"
-      onChange={(e) => onChange(e.target.value)}
-      value={value}
-    />
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={onAdd}
-      disabled={!value.trim()}
-    >
-      <Plus className="w-4 h-4" />
-    </Button>
-  </div>
-);
+  disabled,
+  icon,
+}: AddItemInputProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onAdd();
+    }
+  };
+
+  return (
+    <div className="flex gap-2">
+      <Input
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+      />
+      <Button onClick={onAdd} disabled={disabled}>
+        {icon || "+"}
+      </Button>
+    </div>
+  );
+};

@@ -1,5 +1,5 @@
-import type { Address } from "viem";
 import { EAS_CONFIG_BY_CHAIN_ID } from "@/lib/eas/config";
+import type { Address } from "viem";
 
 export const getEasscanEndpoint = (chainId: number) => {
 	return EAS_CONFIG_BY_CHAIN_ID[chainId]?.easscanUrl;

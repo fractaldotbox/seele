@@ -1,7 +1,7 @@
 export * from "./ens";
 
 export {
-  getSocialsFromEns,
-  getTop200EnsSocials,
-  getInfluentialEnsTwitters,
+	getSocialsFromEns,
+	getTop200EnsSocials,
+	getInfluentialEnsTwitters,
 } from "./ens";

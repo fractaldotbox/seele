@@ -2,41 +2,41 @@ import { type TransactionReceipt, parseEventLogs } from "viem";
 import { EAS_ABI } from "./abi";
 
 export enum Event {
-  Attested = "Attested",
-  Timestamped = "Timestamped",
-  RevokedOffchain = "RevokedOffchain",
+	Attested = "Attested",
+	Timestamped = "Timestamped",
+	RevokedOffchain = "RevokedOffchain",
 }
 
 // Model after eas-sdk/src/utils.ts
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseTransformEvent<T>(eventName: Event, fx: (event: any) => T) {
-  return (receipt: TransactionReceipt) => {
-    const logs = parseEventLogs({
-      abi: EAS_ABI,
-      eventName,
-      logs: receipt.logs,
-    });
-    return logs.map(fx);
-  };
+	return (receipt: TransactionReceipt) => {
+		const logs = parseEventLogs({
+			abi: EAS_ABI,
+			eventName,
+			logs: receipt.logs,
+		});
+		return logs.map(fx);
+	};
 }
 
 export const getUIDsFromAttestReceipt = (receipt: TransactionReceipt) => {
-  return parseTransformEvent(Event.Attested, (event) => event.data)(receipt);
+	return parseTransformEvent(Event.Attested, (event) => event.data)(receipt);
 };
 
 export const getTimestampFromTimestampReceipt = (
-  receipt: TransactionReceipt,
+	receipt: TransactionReceipt,
 ) => {
-  return parseTransformEvent(Event.Timestamped, (event) =>
-    BigInt(event.timestamp),
-  )(receipt);
+	return parseTransformEvent(Event.Timestamped, (event) =>
+		BigInt(event.timestamp),
+	)(receipt);
 };
 
 export const getTimestampOffchainRevocationReceipt = (
-  receipt: TransactionReceipt,
+	receipt: TransactionReceipt,
 ) => {
-  return parseTransformEvent(Event.RevokedOffchain, (event) =>
-    BigInt(event.timestamp),
-  )(receipt);
+	return parseTransformEvent(Event.RevokedOffchain, (event) =>
+		BigInt(event.timestamp),
+	)(receipt);
 };

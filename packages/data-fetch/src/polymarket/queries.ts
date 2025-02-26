@@ -1,14 +1,14 @@
-import { gql, request } from "graphql-request";
 import dotenv from "dotenv";
+import { gql, request } from "graphql-request";
 
 dotenv.config();
 
 const THE_GRAPH_API_KEY = process.env.THE_GRAPH_API_KEY as string;
 
 export const fetchOptimisticPriceRequests = async (qty = 5) => {
-  const endpoint = `https://gateway.thegraph.com/api/${THE_GRAPH_API_KEY}/subgraphs/id/BpK8AdxzBUVnFN3ZCt2u3PgnKRNnS4WbM6MUETZ6b3yK`;
+	const endpoint = `https://gateway.thegraph.com/api/${THE_GRAPH_API_KEY}/subgraphs/id/BpK8AdxzBUVnFN3ZCt2u3PgnKRNnS4WbM6MUETZ6b3yK`;
 
-  const query = gql`
+	const query = gql`
     {
       optimisticPriceRequests(
         first: ${qty}
@@ -25,11 +25,11 @@ export const fetchOptimisticPriceRequests = async (qty = 5) => {
     }
   `;
 
-  const data = (await request(endpoint, query)) as {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    optimisticPriceRequests: any[];
-  };
+	const data = (await request(endpoint, query)) as {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		optimisticPriceRequests: any[];
+	};
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  return data.optimisticPriceRequests as any[];
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	return data.optimisticPriceRequests as any[];
 };

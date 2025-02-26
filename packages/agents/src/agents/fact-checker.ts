@@ -1,30 +1,31 @@
 import { openai } from "@ai-sdk/openai";
-import { cosineSimilarity, embedMany, generateText } from 'ai';
-import { Storage } from "unstorage";
-import { createEmbeddings, generateObjectWithAgent, queryWithEmbeddings } from "../utils";
+import { type Agent, createAgent } from "@statelyai/agent";
+import { cosineSimilarity, embedMany, generateText } from "ai";
+import _ from "lodash";
+import type { Storage } from "unstorage";
+import { an } from "vitest/dist/chunks/reporters.DTtkbAtP.js";
 import z, { string } from "zod";
-import _ from 'lodash'
-import { NewsFeedItem } from "../planner";
-import { createAgent } from "@statelyai/agent";
+import {
+	createEmbeddings,
+	generateObjectWithAgent,
+	queryWithEmbeddings,
+} from "../utils";
+import { NewsFeedItem } from "./editor";
 /**
  * Base on data (from polymarket)
  * Detect false information in the article and provide suggestions
  */
 
 export const agentParamsFactChecker = {
-    name: 'fact-checker',
-    model: openai('gpt-4-turbo'),
-    events: {
-    },
+	name: "fact-checker",
+	model: openai("gpt-4-turbo"),
+	events: {},
+};
 
-}
+export const createFactCheckPromptParams = (query: string, facts: string[]) => {
+	const newsContext = facts.join("\n");
 
-
-export const createFactCheckPromptParams = (query, facts: string[]) => {
-
-    const newsContext = facts.join('\n');
-
-    const prompt = `
+	const prompt = `
     Facts are provided in the context. 
   <Context>
   
@@ -38,8 +39,8 @@ export const createFactCheckPromptParams = (query, facts: string[]) => {
 
   `;
 
-    return {
-        system: `You are a fact-checking expert.
+	return {
+		system: `You are a fact-checking expert.
         Use the provided context to thoroughly analyze and fact-check the prompt.
         Be factual and not to be creative
         
@@ -68,90 +69,97 @@ export const createFactCheckPromptParams = (query, facts: string[]) => {
         
         
         "`,
-        schema: FactCheckResult,
-        prompt
+		schema: FactCheckResult,
+		prompt,
+	};
+};
 
-    }
+export const FactCheckQuery = z
+	.object({
+		claim: z.string(),
+		keywords: z.array(z.string()),
+	})
+	.describe("Claim to be fact-check");
 
-}
+export const FactCheckResult = z
+	.object({
+		is_true: z.boolean(),
+		confidence_level: z.number(),
+		citations: z.string(),
+		citation_url: z.string(),
+		explanation: z.string(),
+	})
+	.describe("Result of fact checking if statement is true");
 
-export const FactCheckResult = z.object({
-    is_true: z.boolean(),
-    confidence_level: z.number(),
-    citations: z.string(),
-    citation_url: z.string(),
-    explanation: z.string(),
-}).describe('Result of fact checking if statement is true');
+export const identifyClaimWithKeywords =
+	(agent: Agent<any, any>) => async (query: string) => {
+		const result = await generateObjectWithAgent(agent, {
+			schema: FactCheckQuery,
+			prompt: createRAGPrompt(query),
+		});
 
+		return result;
+	};
 
-export const factCheckWithRAG = async (query: string, storage: Storage) => {
+export const factCheckWithRAG =
+	(agent: Agent<any, any>) => async (article: string, storage: Storage) => {
+		const claimWithKeywords = await identifyClaimWithKeywords(agent)(article);
 
-    const result = await generateText(
-        {
-            model: openai('gpt-4-turbo'),
-            prompt: createRAGPrompt(query),
-        }
-    )
+		console.log("claimWithKeywords:", claimWithKeywords);
+		const relevantNews = await findRelevantInfo(
+			claimWithKeywords?.keywords,
+			storage,
+		);
 
-    const agent = createAgent(agentParamsFactChecker);
+		const params = createFactCheckPromptParams(
+			article,
+			relevantNews.map(({ item }) => item.value.content),
+		);
 
-    const keywordsQuery = result.text;
+		console.log("===fact check===");
 
-    console.log('keywordsQuery:', keywordsQuery)
-    const relevantNews = await findRelevantInfo(keywordsQuery, storage);
+		console.log(params.prompt);
+		const results = await generateObjectWithAgent(agent, params);
 
+		console.log("fact check results", results);
 
-    const params = createFactCheckPromptParams(query, relevantNews.map(({ item }) => item.value.content));
-
-    console.log('===fact check agent===');
-
-    console.log(params.prompt);
-    const results = await generateObjectWithAgent(agent, params);
-
-
-    console.log('fact check results', results)
-}
-
+		return results;
+	};
 
 // TODO polymarket data
 // canonical data format
 
+export const findRelevantInfo = async (
+	keywords: string[],
+	storage: Storage,
+	k = 10,
+) => {
+	const keys = await storage.getKeys();
+	const items = await storage.getItems(keys);
 
+	// TODO type
+	const embeddings = await createEmbeddings(
+		items.map((item) => item.value.title),
+	);
+	const queryEmbeddings = await createEmbeddings([keywords.join(",")]);
 
-export const findRelevantInfo = async (query: string, storage: Storage, k: number = 10) => {
+	const results = await queryWithEmbeddings(embeddings, queryEmbeddings);
 
-    const keys = await storage.getKeys()
-    const items = await storage.getItems(keys)
+	return _.take(results, k).map((result) => {
+		const { index, score } = result;
+		const item = items[index];
 
-    // TODO type
-    const embeddings = await createEmbeddings(items.map((item) => item.value.title));
-    const queryEmbeddings = await createEmbeddings([query]);
-
-    const results = await queryWithEmbeddings(embeddings, queryEmbeddings);
-
-    return _.take(results, k).map((result) => {
-        const { index, score } = result;
-        const item = items[index];
-
-
-        return {
-            item,
-            score
-        }
-
-    })
-
-}
+		return {
+			item,
+			score,
+		};
+	});
+};
 
 export const createRAGPrompt = (query: string) => {
-
-
-    return `
+	return `
     identify 1-3 keywords in the query "${query}, delimited by "," Example: "Trump,Biden,election"
-    `
+    `;
+};
 
-
-}
-
-
-// export const 
+// export const

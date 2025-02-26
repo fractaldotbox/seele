@@ -13,6 +13,38 @@ export type NewsFeedItem = {
 	publishedDate: string;
 };
 
+const createPromptEditArticle = (article: string, reviews: string[]) => `
+
+Base on the reviews below, achieve the goal
+
+<GOAL>
+1. Rewrite the article base on the reviews with around same number of words, do not comment on the original article
+2. write a footnote to mention modifications you made, acknowledge and summarize reviews from the reviewers
+</GOAL>
+
+<Article>
+${article}
+</Article>
+
+<Reviews>
+${reviews}
+</Reviews>
+
+<EXAMPLE>
+Example output:
+{{
+    "article": "Ether's price experienced a significant decline, dropping over 5% to $2,375 on Tuesday. This downturn coincides with a critical technical pattern, as Ether's 50-day simple moving average (SMA) is poised to cross below its 200-day SMA, signaling a potential "death cross." This pattern suggests that short-term momentum may soon underperform the long-term average, possibly leading to a pronounced bearish trend. While this indicator has a mixed track record in forecasting price movements, it often prompts momentum traders to anticipate further declines."            
+    "footnote": "This article revision incorporates a more detailed analysis of the market dynamics surrounding Ether and other major cryptocurrencies, addressing the lack of depth noted in the initial review. The modifications include a clearer explanation of the technical indicators and their implications for market trends. Acknowledgment to vitalik.eth for the constructive feedback which guided these enhancements."    
+
+
+}}
+</EXAMPLE>
+
+
+
+`
+
+
 const createPromptArticlePlanCreate = (news: string[]) => `
 Today's date is ${new Date().toLocaleDateString("en-GB")}
 
@@ -75,13 +107,12 @@ export const ArticlePlan = z.object({
 		)
 		.describe("Plan of News articles to write"),
 });
+export const EditArticleResult = z.object({
+	article: z.string().describe("Edited article"),
+	footnote: z.string().describe("Footnote to mention modifications made, acknowledge and summarize reviews from the reviewers"),
 
-// export const NewsCreatePlan = z.object({
-//     news: z.array(
-//         z.string()
-//     ).describe('news of today'),
+});
 
-// });
 
 export const agentParamsEditor = {
 	name: "planner",
@@ -97,7 +128,7 @@ export const agentParamsEditor = {
 const systemPrompt =
 	() => `You are an expert news editor in the cryptocurrency and technology industries.
 
-When look for citiations, prioritize information available on polymarket, twitter and then credible sources
+When look for citiatwions, prioritize information available on polymarket, twitter and credible sources
 
 `;
 
@@ -121,3 +152,31 @@ export const planNewsDirection =
 
 		return results;
 	};
+
+
+export const editArticleWithFootnote = (agent: Agent<any, any>) => async (article: string, reviews: string[]) => {
+
+	const prompt = createPromptEditArticle(article, reviews);
+
+	const results = await generateObjectWithAgent(
+		agent,
+		{
+			schema: EditArticleResult,
+			prompt,
+		}
+
+	)
+
+	return results
+}
+
+
+export const createEditParams = (article: string, reviews: string[]) => {
+
+	const prompt = createPromptEditArticle(article, reviews);
+	return {
+		system: systemPrompt,
+		schema: ArticlePlan,
+		prompt,
+	};
+};

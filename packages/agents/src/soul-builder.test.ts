@@ -1,9 +1,8 @@
 import _ from "lodash";
 import type { Storage } from "unstorage";
 import { beforeAll, describe, expect, it } from "vitest";
-import { initStorage } from "../storage";
-import { crawlNewsWithTopic } from "./curator";
-import { buildPersonality, summarizePersonality } from "./soul-builder";
+import { initStorage } from "./storage";
+import { buildSoul, summarizePersonality } from "./soul-builder";
 
 export type TweetItem = any;
 
@@ -12,10 +11,9 @@ const getKey = (tweet: any) => {
 };
 
 const loadTweets = async (storage: Storage) => {
-	const fixtures = await import.meta.glob(`../fixture/twitter/*.json`);
+	const fixtures = await import.meta.glob(`./fixture/twitter/*.json`);
 
 	for (const path in fixtures) {
-		console.log("path", path);
 
 		const data = (await fixtures[path]())?.default;
 
@@ -47,8 +45,9 @@ describe(
 			expect(keys.length).toEqual(1136);
 		});
 
-		it("#summarizePersonality", async () => {
-			const keys = await storage.getKeys("x:vitalikbuterin");
+		it("#buildSoul", async () => {
+			const keys = await storage.getKeys("x:cz_binance");
+			// const keys = await storage.getKeys("x:vitalikbuterin");
 
 			const items = await storage.getItems(
 				keys.map((key: string) => ({ key })),
@@ -61,11 +60,11 @@ describe(
 
 			const summaries = await summarizePersonality(trainingItems);
 
-			const personality = await buildPersonality(summaries);
+			const soul = await buildSoul(summaries);
 
-			console.log("=====personality=====");
+			console.log("=====soul=====");
 
-			console.log(personality);
+			console.log(soul);
 		});
 	},
 	60 * 1000,

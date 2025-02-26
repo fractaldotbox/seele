@@ -34,11 +34,11 @@ export const summarizePersonality = async (tweets: TweetItem[]) => {
 
 // base on these 10 summary of personality of a person, summarize that into 3 lines
 
-export const buildPersonality = async (summaries: string[]) => {
+export const buildSoul = async (summaries: string[]) => {
 	const result = await generateText({
 		model: openai("gpt-4-turbo"),
 		prompt: `Summarize personality of the author based on the following summaries 
-            and suggest potential viewpoitns if the author is taking a reviewer role for articles on newspaper.
+            and suggest potential viewpoints if the author is taking a reviewer role for articles on newspaper.
 
             Do not mention "Base on the tweets" or "Base on the summaries" in the response.
             

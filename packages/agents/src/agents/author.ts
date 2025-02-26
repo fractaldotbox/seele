@@ -12,20 +12,20 @@ export const agentParamsAuthor = {
 
 export const writeArticle =
 	(agent: Agent<any, any>) =>
-	async ({
-		topic,
-		editorialDirection,
-		researchContext,
-		wordCount = 600,
-	}: {
-		topic: string;
-		editorialDirection: string;
-		researchContext: z.infer<typeof ResearchResult>;
-		wordCount?: number;
-	}) => {
-		const result = await generateText({
-			model: agent.model,
-			prompt: `Write an article base on news of below topic and context about the future of AI.
+		async ({
+			topic,
+			editorialDirection,
+			researchContext,
+			wordCount = 600,
+		}: {
+			topic: string;
+			editorialDirection: string;
+			researchContext: z.infer<typeof ResearchResult>;
+			wordCount?: number;
+		}) => {
+			const result = await generateText({
+				model: agent.model,
+				prompt: `Write an article base on news of below topic and context
 
         <Topic>
         ${topic}
@@ -40,10 +40,10 @@ export const writeArticle =
         
         Write in around ${wordCount} words.
         `,
-		});
+			});
 
-		return result?.text;
-	};
+			return result?.text;
+		};
 
 // const agent = createAgent(agentParamsAuthor);
 // mountObservability(agent);

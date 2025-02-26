@@ -50,6 +50,9 @@ importers:
       '@repo/access-gate':
         specifier: workspace:*
         version: link:../../packages/access-gate
+      '@repo/data-fetch':
+        specifier: workspace:*
+        version: link:../../packages/data-fetch
       '@scure/base':
         specifier: ^1.2.4
         version: 1.2.4
@@ -165,6 +168,9 @@ importers:
       graphql-request:
         specifier: ^6.1.0
         version: 6.1.0(encoding@0.1.13)(graphql@16.10.0)
+      viem:
+        specifier: ^2.23.5
+        version: 2.23.5(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*

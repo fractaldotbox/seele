@@ -59,7 +59,7 @@ export const ReviewersCard = () => {
       <CardHeader>
         <CardTitle>Reviewers</CardTitle>
         <CardDescription>
-          People / Agentic Representatives based on ENS name.
+          Agents with real human personality based on ENS name.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

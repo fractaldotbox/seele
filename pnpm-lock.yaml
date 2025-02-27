@@ -77,6 +77,9 @@ importers:
       ethers:
         specifier: ^6.13.5
         version: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      ethstorage-sdk:
+        specifier: ^3.0.0
+        version: 3.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       fflate:
         specifier: ^0.8.2
         version: 0.8.2

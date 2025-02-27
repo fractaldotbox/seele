@@ -7,15 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddItemInput } from "../../../components/AddItemInput";
 import { Permissions } from "@repo/access-gate/lib/eas/constants";
-
-interface TokenGate {
-  contractAddress: string;
-  chainId: number;
-  minBalance: string;
-}
+import { getEasDataByChain } from "@repo/access-gate/lib/eas/utils";
+import type { TokenGateCriteria as TokenGate } from "@repo/access-gate/lib/token-gate/types";
+import { getCMSWhitelistedAddresses } from "@repo/data-fetch/eas/";
 
 interface Attestation {
   attesterAddress: string;
@@ -26,14 +23,17 @@ interface Attestation {
 interface TokenGateCardProps {
   existingTokenGates?: TokenGate[];
   existingAttestations?: Attestation[];
+  existingWhitelist?: string[];
   onChange?: (tokenGates: TokenGate[]) => void;
   onAttestationChange?: (attestations: Attestation[]) => void;
+  onWhitelistChange?: (whitelist: string[]) => void;
   readOnly?: boolean;
 }
 
 export const TokenGateCard = ({
   existingTokenGates = [],
   existingAttestations = [],
+  existingWhitelist = [],
   onChange,
   onAttestationChange,
   readOnly = false,
@@ -43,15 +43,31 @@ export const TokenGateCard = ({
   const [tokenGates, setTokenGates] = useState<TokenGate[]>(existingTokenGates);
   const [chainId, setChainId] = useState<number>(1); // Default to Ethereum Mainnet
   const [minBalance, setMinBalance] = useState<string>("1"); // Default minimum balance
+  const [tokenType, setTokenType] = useState<"ERC20" | "ERC721">("ERC20");
 
   // Attestation states
   const [attesterAddress, setAttesterAddress] = useState("");
   const [attestations, setAttestations] =
     useState<Attestation[]>(existingAttestations);
-  const [attestationChainId, setAttestationChainId] = useState<number>(1);
+  const [attestationChainId, setAttestationChainId] = useState<number>(84532);
   const [selectedPermissions, setSelectedPermissions] = useState<Permissions[]>(
     [],
   );
+
+  // Whitelist states
+  const [whitelist, setWhitelist] = useState<string[]>(existingWhitelist);
+  const [isWhitelistLoading, setIsWhitelistLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchWhitelist = async () => {
+      setIsWhitelistLoading(true);
+      const whitelist = await getCMSWhitelistedAddresses(attestationChainId);
+      setWhitelist(whitelist);
+      setIsWhitelistLoading(false);
+    };
+
+    fetchWhitelist();
+  }, [attestationChainId]);
 
   // Update parent component when token gates change
   const updateTokenGates = (newTokenGates: TokenGate[]) => {
@@ -75,6 +91,7 @@ export const TokenGateCard = ({
         contractAddress: contractAddress.trim(),
         chainId,
         minBalance,
+        tokenType,
       };
 
       updateTokenGates([...tokenGates, newTokenGate]);
@@ -129,10 +146,13 @@ export const TokenGateCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Token Gates Section */}
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-medium">Token Gates</h3>
+            <p className="text-sm text-muted-foreground">
+              Add token contracts to control access to the Arena.
+            </p>
             {!readOnly && (
               <div className="flex flex-col gap-2">
                 <AddItemInput
@@ -142,6 +162,16 @@ export const TokenGateCard = ({
                   onAdd={handleAddTokenGate}
                 />
                 <div className="flex gap-2">
+                  <select
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    value={tokenType}
+                    onChange={(e) =>
+                      setTokenType(e.target.value as "ERC20" | "ERC721")
+                    }
+                  >
+                    <option value="ERC20">ERC20</option>
+                    <option value="ERC721">ERC721</option>
+                  </select>
                   <select
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     value={chainId}
@@ -176,6 +206,7 @@ export const TokenGateCard = ({
                         {gate.contractAddress}
                       </span>
                       <div className="flex gap-2 text-xs text-muted-foreground">
+                        <span>{gate.tokenType}</span>
                         <span>Chain: {getChainName(gate.chainId)}</span>
                         <span>Min: {gate.minBalance}</span>
                       </div>
@@ -200,7 +231,21 @@ export const TokenGateCard = ({
 
           {/* Attestations Section */}
           <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-medium">Attestations</h3>
+            <h3 className="text-lg font-medium">EAS Attestations</h3>
+            <p className="text-sm text-muted-foreground">
+              EAS attestations are used to control access to the Arena.
+              Attestation Schema Id:{" "}
+              <a
+                href={`${getEasDataByChain("baseSepolia").baseUrl}/schema/view/${
+                  getEasDataByChain("baseSepolia").easAttestedByMemberSchema
+                }`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >
+                {`${getEasDataByChain("baseSepolia").easAttestedByMemberSchema.slice(0, 10)}...${getEasDataByChain("baseSepolia").easAttestedByMemberSchema.slice(-8)}`}
+              </a>
+            </p>
             {!readOnly && (
               <div className="flex flex-col gap-2">
                 <AddItemInput
@@ -282,6 +327,38 @@ export const TokenGateCard = ({
                         <X className="h-4 w-4" />
                       </Button>
                     )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Whitelist Section - Updated */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-medium">Whitelisted Admins</h3>
+            <p className="text-sm text-muted-foreground">
+              Addresses that have been EAS-attested with admin permissions.
+            </p>
+            <div className="flex flex-col gap-2">
+              {isWhitelistLoading ? (
+                <div className="text-sm text-muted-foreground italic">
+                  Loading whitelisted admins...
+                </div>
+              ) : whitelist.length === 0 ? (
+                <div className="text-sm text-muted-foreground italic">
+                  No whitelisted admins
+                </div>
+              ) : (
+                whitelist.map((address) => (
+                  <div
+                    key={address}
+                    className="flex items-center justify-between p-2 bg-secondary rounded-md"
+                  >
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="truncate text-sm font-medium">
+                        {`${address.slice(0, 6)}...${address.slice(-4)}`}
+                      </span>
+                    </div>
                   </div>
                 ))
               )}

@@ -14,7 +14,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const tokenGateRepository = new TokenGateRepository();
+    const tokenGateRepository: TokenGateRepository =
+      await TokenGateRepository.create();
     const tokenGates = await tokenGateRepository.getAll();
 
     console.log("tokenGates", tokenGates);

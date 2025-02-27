@@ -11,13 +11,13 @@ interface TokenGateDeleteRequestDto {
 }
 
 export async function GET() {
-  const tokenGateRepository = new TokenGateRepository();
+  const tokenGateRepository = await TokenGateRepository.create();
   const criteria = await tokenGateRepository.getAll();
   return NextResponse.json({ criteria });
 }
 
 export async function POST(request: Request) {
-  const tokenGateRepository = new TokenGateRepository();
+  const tokenGateRepository = await TokenGateRepository.create();
 
   const body: TokenGatePostRequestDto = await request.json();
   const { criteria } = body;
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const tokenGateRepository = new TokenGateRepository();
+  const tokenGateRepository = await TokenGateRepository.create();
 
   const body: TokenGateDeleteRequestDto = await request.json();
   const { contractAddress } = body;

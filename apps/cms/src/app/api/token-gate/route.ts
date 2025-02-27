@@ -1,5 +1,5 @@
 import { TokenGateRepository } from "@/lib/repository/token-gate.repository";
-import type { TokenGateCriteria } from "@repo/access-gate/lib/token-gate/types";
+import type { TokenGateCriteria } from "@seele/access-gate/lib/token-gate/types";
 import { NextResponse } from "next/server";
 
 interface TokenGatePostRequestDto {

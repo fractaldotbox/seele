@@ -1,5 +1,5 @@
 import { TokenGateRepository } from "@/lib/repository/token-gate.repository";
-import { TokenGateVerifier } from "@repo/access-gate/verifiers/token-gate";
+import { TokenGateVerifier } from "@seele/access-gate/verifiers/token-gate";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

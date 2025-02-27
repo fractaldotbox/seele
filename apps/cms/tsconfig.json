@@ -20,8 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@repo/data-fetch/*": ["../../packages/data-fetch/src/*"],
-      "@repo/access-gate/*": ["../../packages/access-gate/src/*"]
+      "@seele/data-fetch/*": ["../../packages/data-fetch/src/*"],
+      "@seele/access-gate/*": ["../../packages/access-gate/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

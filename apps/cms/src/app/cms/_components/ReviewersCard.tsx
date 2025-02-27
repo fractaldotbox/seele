@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSocialsFromEns } from "@repo/data-fetch/ens";
+import { getSocialsFromEns } from "@seele/data-fetch/ens";
 import { Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { AddItemInput } from "../../../components/AddItemInput";

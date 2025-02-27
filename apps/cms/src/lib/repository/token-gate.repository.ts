@@ -1,4 +1,4 @@
-import type { TokenGateCriteria } from "@repo/access-gate/lib/token-gate/types";
+import type { TokenGateCriteria } from "@seele/access-gate/lib/token-gate/types";
 
 let criteria: TokenGateCriteria[] = [
   // {

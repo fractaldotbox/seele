@@ -9,10 +9,10 @@ import {
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddItemInput } from "../../../components/AddItemInput";
-import { Permissions } from "@repo/access-gate/lib/eas/constants";
-import { getEasDataByChain } from "@repo/access-gate/lib/eas/utils";
-import type { TokenGateCriteria as TokenGate } from "@repo/access-gate/lib/token-gate/types";
-import { getCMSWhitelistedAddresses } from "@repo/data-fetch/eas/";
+import { Permissions } from "@seele/access-gate/lib/eas/constants";
+import { getEasDataByChain } from "@seele/access-gate/lib/eas/utils";
+import type { TokenGateCriteria as TokenGate } from "@seele/access-gate/lib/token-gate/types";
+import { getCMSWhitelistedAddresses } from "@seele/data-fetch/eas/";
 
 interface Attestation {
   attesterAddress: string;

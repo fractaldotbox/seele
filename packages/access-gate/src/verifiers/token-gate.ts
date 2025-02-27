@@ -1,5 +1,6 @@
 import type { IVerifier } from "../interfaces/verifier";
 import { erc20Abi } from "../lib/token-gate/abis/erc20";
+import { erc721Abi } from "../lib/token-gate/abis/erc721";
 import type { TokenGateCriteria } from "../lib/token-gate/types";
 import { createPublicClient, http, type PublicClient } from "viem";
 import { sepolia, baseSepolia } from "viem/chains";
@@ -51,11 +52,11 @@ export class TokenGateVerifier implements IVerifier {
       transport: http(),
     });
 
-    // Add validation logs
     console.log(`[checkTokenBalance] Checking balance for:`, {
       userAddress: address,
       contractAddress: criteria.contractAddress,
       chain: chain.name,
+      tokenType: criteria.tokenType,
     });
 
     try {
@@ -71,14 +72,29 @@ export class TokenGateVerifier implements IVerifier {
         return false;
       }
 
-      // Get token decimals first
+      if (criteria.tokenType === "ERC721") {
+        // Get NFT balance
+        const balance = await publicClient.readContract({
+          address: criteria.contractAddress as `0x${string}`,
+          abi: erc721Abi,
+          functionName: "balanceOf",
+          args: [address as `0x${string}`],
+        });
+
+        console.log(`[checkTokenBalance] Retrieved NFT balance:`, {
+          balance: balance.toString(),
+        });
+
+        return Number(balance) > 0;
+      }
+
+      // Default to ERC20 handling
       const decimals = await publicClient.readContract({
         address: criteria.contractAddress as `0x${string}`,
         abi: erc20Abi,
         functionName: "decimals",
       });
 
-      // Get token balance for the address
       const balance = await publicClient.readContract({
         address: criteria.contractAddress as `0x${string}`,
         abi: erc20Abi,
@@ -86,16 +102,15 @@ export class TokenGateVerifier implements IVerifier {
         args: [address as `0x${string}`],
       });
 
-      console.log(`[checkTokenBalance] Retrieved balance:`, {
+      console.log(`[checkTokenBalance] Retrieved ERC20 balance:`, {
         rawBalance: balance.toString(),
         decimals: decimals,
       });
 
-      // Compare against minimum required balance, accounting for decimals
       return (
         Number(balance) / 10 ** Number(decimals) >= Number(criteria.minBalance)
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error(`[checkTokenBalance] Error reading contract: ${err}`);
       return false;
     }

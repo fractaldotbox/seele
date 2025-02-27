@@ -8,6 +8,7 @@ import { baseSepolia } from "viem/chains";
 import { useAccount, useWalletClient } from "wagmi";
 import { useAttestation } from "../../hooks/use-attestation";
 import { usePrivy } from "@privy-io/react-auth";
+import type { TokenGateCriteria } from "@repo/access-gate/lib/token-gate/types";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -35,11 +36,18 @@ export default function Home() {
       }
 
       try {
-        const tokenGates = [
+        const tokenGates: TokenGateCriteria[] = [
           {
             chainId: 84532,
             contractAddress: "0xd369B2b99CC98FC25aF686e132fB10dE5C7349a6",
             minBalance: "1",
+            tokenType: "ERC20",
+          },
+          {
+            chainId: 84532,
+            contractAddress: "0xA0c70ec36c010B55E3C434D6c6EbEEC50c705794",
+            minBalance: "1",
+            tokenType: "ERC721",
           },
         ];
 

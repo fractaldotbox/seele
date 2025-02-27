@@ -1,5 +1,6 @@
 export type TokenGateCriteria = {
-  contractAddress: string;
   chainId: number;
+  contractAddress: string;
   minBalance: string;
+  tokenType: "ERC20" | "ERC721";
 };

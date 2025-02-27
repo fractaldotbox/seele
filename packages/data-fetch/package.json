@@ -3,8 +3,10 @@
 	"version": "0.0.0",
 	"private": true,
 	"exports": {
+		".": "./src/index.ts",
 		"./*": "./src/*.ts"
 	},
+	"main": "src/index.ts",
 	"scripts": {
 		"lint": "eslint . --max-warnings 0",
 		"test": "vitest run",
@@ -27,6 +29,7 @@
 	},
 	"dependencies": {
 		"@ensdomains/ensjs": "^4.0.2",
+		"ethstorage-sdk": "^3.0.0",
 		"dotenv": "^16.4.7",
 		"graphql": "^16.8.1",
 		"graphql-request": "^6.1.0",

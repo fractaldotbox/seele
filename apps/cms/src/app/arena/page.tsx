@@ -7,10 +7,14 @@ import type { Account, Address } from "viem";
 import { baseSepolia } from "viem/chains";
 import { useAccount, useWalletClient } from "wagmi";
 import { useAttestation } from "../../hooks/use-attestation";
+import { usePrivy } from "@privy-io/react-auth";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { address } = useAccount();
+  const { ready: isReady } = usePrivy();
   const { data: walletClient } = useWalletClient();
 
   const { signAttestation } = useAttestation({
@@ -22,12 +26,86 @@ export default function Home() {
     schemaString: "string voteFor",
   });
 
+  // Token gate verification
+  useEffect(() => {
+    const verifyAccess = async () => {
+      if (!address) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const tokenGates = [
+          {
+            chainId: 84532,
+            contractAddress: "0xd369B2b99CC98FC25aF686e132fB10dE5C7349a6",
+            minBalance: "1",
+          },
+        ];
+
+        const response = await fetch(`/api/verify/token-gate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            address,
+            tokenGates,
+          }),
+        });
+        const data = await response.json();
+        setIsVerified(data.verified);
+      } catch (err) {
+        console.error("[verifyAccess] Failed to verify token access:", err);
+        setIsVerified(false);
+      }
+      setIsLoading(false);
+    };
+
+    verifyAccess();
+  }, [address]);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null; // or a loading skeleton that matches server-side render
+  if (!mounted || isLoading) {
+    return null;
+  }
+
+  if (!isReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl">Connecting wallet...</p>
+      </div>
+    );
+  }
+
+  if (!address) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl">
+          Please connect your wallet to access the Arena
+        </p>
+      </div>
+    );
+  }
+
+  if (!isVerified) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-red-500">Access Denied</h2>
+          <p className="text-lg">
+            You need to hold the required tokens to access this page.
+          </p>
+          <p className="text-sm text-gray-600">
+            Required: Minimum 1 token from contract
+            0xd369B2b99CC98FC25aF686e132fB10dE5C7349a6 on Base Sepolia
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

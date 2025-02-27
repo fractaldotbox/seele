@@ -37,7 +37,8 @@ export class TokenGateVerifier implements IVerifier {
     address: string,
     criteria: TokenGateCriteria,
   ): Promise<boolean> {
-    const chain = SUPPORTED_CHAINS[criteria.chainId];
+    const chain =
+      SUPPORTED_CHAINS[criteria.chainId as keyof typeof SUPPORTED_CHAINS];
     if (!chain) {
       console.error(
         `[checkTokenBalance] Unsupported chain ID: ${criteria.chainId}`,
@@ -50,15 +51,53 @@ export class TokenGateVerifier implements IVerifier {
       transport: http(),
     });
 
-    // Get token balance for the address
-    const balance = await publicClient.readContract({
-      address: criteria.contractAddress as `0x${string}`,
-      abi: erc20Abi,
-      functionName: "balanceOf",
-      args: [address],
+    // Add validation logs
+    console.log(`[checkTokenBalance] Checking balance for:`, {
+      userAddress: address,
+      contractAddress: criteria.contractAddress,
+      chain: chain.name,
     });
 
-    // Compare against minimum required balance
-    return Number(balance) >= Number(criteria.minBalance);
+    try {
+      // First verify if the contract exists and has code
+      const code = await publicClient.getBytecode({
+        address: criteria.contractAddress as `0x${string}`,
+      });
+
+      if (!code) {
+        console.error(
+          `[checkTokenBalance] No contract found at address: ${criteria.contractAddress}`,
+        );
+        return false;
+      }
+
+      // Get token decimals first
+      const decimals = await publicClient.readContract({
+        address: criteria.contractAddress as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "decimals",
+      });
+
+      // Get token balance for the address
+      const balance = await publicClient.readContract({
+        address: criteria.contractAddress as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "balanceOf",
+        args: [address as `0x${string}`],
+      });
+
+      console.log(`[checkTokenBalance] Retrieved balance:`, {
+        rawBalance: balance.toString(),
+        decimals: decimals,
+      });
+
+      // Compare against minimum required balance, accounting for decimals
+      return (
+        Number(balance) / 10 ** Number(decimals) >= Number(criteria.minBalance)
+      );
+    } catch (err) {
+      console.error(`[checkTokenBalance] Error reading contract: ${err}`);
+      return false;
+    }
   }
 }

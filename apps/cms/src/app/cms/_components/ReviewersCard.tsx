@@ -9,7 +9,7 @@ import {
 import { getSocialsFromEns } from "@seele/data-fetch/ens";
 import { Loader2, X } from "lucide-react";
 import { useState } from "react";
-import { AddItemInput } from "./add-item-input";
+import { AddItemInput } from "../../../components/AddItemInput";
 
 interface Reviewer {
   ens: string;
@@ -50,16 +50,16 @@ export const ReviewersCard = () => {
     }
   };
 
-  const handleDeleteReviewer = (index: number) => {
-    setReviewers((prev) => prev.filter((_, i) => i !== index));
+  const handleDeleteReviewer = (ens: string) => {
+    setReviewers((prev) => prev.filter((reviewer) => reviewer.ens !== ens));
   };
 
   return (
-    <Card className="w-[300px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Reviewers</CardTitle>
         <CardDescription>
-          People / Agentic Representatives based on ENS name.
+          Agents with real human personality based on ENS name.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -74,9 +74,9 @@ export const ReviewersCard = () => {
           }
         />
         <div className="flex flex-col gap-2">
-          {reviewers.map((reviewer, index) => (
+          {reviewers.map((reviewer) => (
             <div
-              key={index}
+              key={reviewer.ens}
               className="flex items-center justify-between p-2 bg-secondary rounded-md"
             >
               <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -93,7 +93,7 @@ export const ReviewersCard = () => {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 ml-2 hover:bg-destructive/20"
-                onClick={() => handleDeleteReviewer(index)}
+                onClick={() => handleDeleteReviewer(reviewer.ens)}
               >
                 <X className="h-4 w-4" />
               </Button>

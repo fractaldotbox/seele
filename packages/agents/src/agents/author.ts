@@ -2,6 +2,7 @@ import { openai } from "@ai-sdk/openai";
 import type { Agent } from "@statelyai/agent";
 import { generateText } from "ai";
 import type z from "zod";
+import { persistWithDirectory } from "../storage";
 import type { ResearchResult } from "./researcher";
 
 export const agentParamsAuthor = {
@@ -32,8 +33,11 @@ export const writeArticle =
         </Topic>
 
 
-        <Context>
+		<EditorialDirection>
+		${editorialDirection}
+		</EditorialDirection>
 
+        <Context>
         ${researchContext}
         </Context>
 
@@ -47,3 +51,22 @@ export const writeArticle =
 
 // const agent = createAgent(agentParamsAuthor);
 // mountObservability(agent);
+
+export const writeAndPersist =
+	(agent: Agent<any, any>) => async (contentKey: string, context: any) => {
+		const privateKeyAgent = process.env.PRIVATE_KEY_AGENT!;
+
+		const article = await writeArticle(agent)(context);
+
+		await persistWithDirectory(
+			{
+				privateKey: privateKeyAgent,
+				directoryAddress: "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8",
+			},
+			{
+				namespace: "community1",
+				contentKey,
+				content: article,
+			},
+		);
+	};

@@ -17,6 +17,7 @@ describe(
 	"EthStorage",
 	() => {
 		const privateKeyStorage = process.env.PRIVATE_KEY_STORAGE!;
+		// 0xFbea411E02117CEda511f8760e349bC2547Ccb9D
 		const privateKeyAgent = process.env.PRIVATE_KEY_AGENT!;
 
 		// it('#readBlob', async () => {
@@ -38,12 +39,12 @@ describe(
 			const ethStorage = await createEthStorage(privateKeyStorage);
 			const existingAddress = "";
 			const { flatDirectory, directoryAddress } = await createDirectory(
-				privateKeyStorage,
+				privateKeyAgent,
 				existingAddress,
 			);
 
 			const request = {
-				key: "a.txt",
+				key: "abc.txt",
 				content: Buffer.from("big data 2200"),
 				type: FileType.Blob,
 			};
@@ -98,5 +99,5 @@ describe(
 			expect(results.toString("utf-8")).toEqual(data);
 		});
 	},
-	60 * 1000,
+	5 * 60 * 1000,
 );

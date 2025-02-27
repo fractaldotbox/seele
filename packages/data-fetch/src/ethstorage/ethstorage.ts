@@ -86,7 +86,7 @@ export const uploadFileToDirectoryAsync = (flatDirectory, request) => {
 			},
 		};
 
-		console.log("uploading", request.key, request.content);
+		console.log("uploading:", request.key);
 		flatDirectory.upload({
 			...request,
 			type: 2, // 1 for calldata and 2 for blob

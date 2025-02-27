@@ -21,7 +21,6 @@ const articles = defineCollection({
 		);
 
 		// https://docs.astro.build/en/guides/markdown-content/
-		console.log("results", results, keys[0]);
 		return results.map((content, i) => ({
 			content,
 			id: keys[i],

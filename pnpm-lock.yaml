@@ -202,6 +202,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^1.1.13
         version: 1.1.13(zod@3.24.2)
+      '@repo/data-fetch':
+        specifier: workspace:*
+        version: link:../data-fetch
       '@statelyai/agent':
         specifier: ^1.1.6
         version: 1.1.6(openai@4.85.4(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.24.2))(react@19.0.0)(sswr@2.1.0(svelte@5.20.2))(svelte@5.20.2)(vue@3.5.13(typescript@5.7.3))(zod@3.24.2)
@@ -214,9 +217,6 @@ importers:
       ai:
         specifier: ^4.1.46
         version: 4.1.46(react@19.0.0)(zod@3.24.2)
-      ethstorage-sdk:
-        specifier: ^3.0.0
-        version: 3.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -275,6 +275,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      ethstorage-sdk:
+        specifier: ^3.0.0
+        version: 3.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       graphql:
         specifier: ^16.8.1
         version: 16.10.0

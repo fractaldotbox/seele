@@ -20,12 +20,12 @@
 		"typescript": "5.7.3"
 	},
 	"dependencies": {
+		"@repo/data-fetch": "workspace:*",
 		"@ai-sdk/openai": "^1.1.13",
 		"@statelyai/agent": "^1.1.6",
 		"@tavily/core": "^0.3.1",
 		"@types/lodash": "^4.17.15",
 		"viem": "2.23.5",
-		"ethstorage-sdk": "^3.0.0",
 		"ai": "^4.1.46",
 		"lodash": "^4.17.21",
 		"openai": "^4.85.4",

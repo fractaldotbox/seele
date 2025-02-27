@@ -6,6 +6,8 @@ const chainIdToApiRoot: any = {
     [chains.mainnet.id]: "https://eth.blockscout.com/api/",
     [chains.sepolia.id]: "https://eth-sepolia.blockscout.com/api/",
     [chains.optimism.id]: "https://optimism.blockscout.com/api/",
+
+    [3337]: "https://explorer.beta.testnet.l2.quarkchain.io/api/",
 };
 
 export const invokeApi = async (endpoint: string, body?: any) => {
@@ -49,7 +51,7 @@ export const getEndpointStrategy = (chainId?: number) => ({
         const { blobHash } = params;
         return (
             chainIdToApiRoot[chainId || chains.mainnet.id] +
-            "v2/blob/" +
+            "v2/blobs/" +
             blobHash
         );
     },
@@ -151,5 +153,6 @@ export const getBlob = (blobHash: string, chainId: number) => {
         { blobHash },
         chainId,
     );
+    console.log('endpoint', endpoint)
     return invokeApi(endpoint);
 }

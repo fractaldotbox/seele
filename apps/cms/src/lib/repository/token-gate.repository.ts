@@ -1,15 +1,46 @@
 import type { TokenGateCriteria } from "@seele/access-gate/lib/token-gate/types";
-
-let criteria: TokenGateCriteria[] = [
-  // {
-  //   contractAddress: "0xd369B2b99CC98FC25aF686e132fB10dE5C7349a6",
-  //   tokenType: "ERC20",
-  //   chainId: 84532,
-  //   minBalance: "1",
-  // },
-];
+import {
+  createDirectory,
+  downloadFileFromDirectoryAsync,
+  FileType,
+  uploadFileToDirectory,
+} from "@seele/data-fetch/ethstorage";
+import type { FlatDirectory } from "ethstorage-sdk";
 
 export class TokenGateRepository {
+  private directory: {
+    flatDirectory: FlatDirectory;
+    directoryAddress: string;
+  };
+
+  constructor(flatDirectory: FlatDirectory, directoryAddress: string) {
+    this.directory = {
+      flatDirectory: flatDirectory,
+      directoryAddress: directoryAddress,
+    };
+  }
+
+  static async create() {
+    console.log(
+      "process.env.PRIVATE_KEY_STORAGE",
+      process.env.PRIVATE_KEY_STORAGE,
+    );
+    console.log(
+      "process.env.DIRECTORY_ADDRESS_MANAGER",
+      process.env.DIRECTORY_ADDRESS_MANAGER,
+    );
+
+    const _directory = await createDirectory(
+      process.env.PRIVATE_KEY_STORAGE!,
+      process.env.DIRECTORY_ADDRESS_MANAGER!,
+    );
+
+    return new TokenGateRepository(
+      _directory.flatDirectory,
+      _directory.directoryAddress,
+    );
+  }
+
   /**
    * Adds a new token gate to the repository
    * @param tokenGateData - The token gate data to be added
@@ -17,7 +48,22 @@ export class TokenGateRepository {
    */
   async add(tokenGateCriteria: TokenGateCriteria[]): Promise<boolean> {
     try {
-      criteria.push(...tokenGateCriteria);
+      const existingCriteria = (await this.getAll()) || [];
+
+      const request = {
+        key: "abc.json",
+        content: Buffer.from(
+          JSON.stringify([...existingCriteria, ...tokenGateCriteria]),
+        ),
+        type: FileType.Blob,
+      };
+
+      await uploadFileToDirectory(
+        process.env.PRIVATE_KEY_STORAGE!,
+        this.directory.directoryAddress,
+        request,
+      );
+
       return true;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -32,9 +78,23 @@ export class TokenGateRepository {
    */
   async delete(contractAddress: string): Promise<boolean> {
     try {
-      criteria = criteria.filter(
+      const existingCriteria = (await this.getAll()) || [];
+      const updatedCriteria = existingCriteria.filter(
         (token) => token.contractAddress !== contractAddress,
       );
+
+      const request = {
+        key: "abc.json",
+        content: Buffer.from(JSON.stringify(updatedCriteria)),
+        type: FileType.Blob,
+      };
+
+      await uploadFileToDirectory(
+        process.env.PRIVATE_KEY_STORAGE!,
+        this.directory.directoryAddress,
+        request,
+      );
+
       return true;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -43,6 +103,13 @@ export class TokenGateRepository {
   }
 
   async getAll(): Promise<TokenGateCriteria[]> {
-    return criteria;
+    const results = await downloadFileFromDirectoryAsync(
+      this.directory.flatDirectory,
+      "abc.json",
+    );
+
+    const resultsInString = JSON.parse(results.toString("utf-8"));
+
+    return resultsInString;
   }
 }

@@ -5,7 +5,7 @@ import { TokenGateCard } from "@/app/cms/_components/TokenGateCard";
 import { TopicsCard } from "@/app/cms/_components/TopicsCard";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { getCMSWhitelistedAddresses } from "@repo/data-fetch/eas";
+import { getCMSWhitelistedAddresses } from "@seele/data-fetch/eas";
 import { useChainId } from "wagmi";
 
 const CMSPage = () => {

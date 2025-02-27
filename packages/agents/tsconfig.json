@@ -1,12 +1,12 @@
 {
-  "extends": "@seele/typescript-config/base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@seele/data-fetch/*": ["../../packages/data-fetch/src/*"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+	"extends": "@seele/typescript-config/base.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@seele/data-fetch/*": ["../../packages/data-fetch/src/*"]
+		}
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
 }

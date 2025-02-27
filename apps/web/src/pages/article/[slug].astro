@@ -1,0 +1,32 @@
+---
+import type { GetStaticPaths } from "astro";
+export const getStaticPaths = (async () => {
+	return [
+		{ params: { slug: "article1.md" } },
+		{ params: { slug: "article2.md" } },
+		{ params: { slug: "article3.md" } },
+		{ params: { slug: "article4.md" } },
+		{ params: { slug: "article5.md" } },
+	];
+}) satisfies GetStaticPaths;
+
+import { Image } from "astro:assets";
+import { getCollection, getEntry, render } from "astro:content";
+import { marked } from "marked";
+
+// const articles = await getCollection("articles");
+// console.log("article", articles?.[0].id);
+// const blog = await getEntry("articles", "a");
+
+const { slug } = Astro.params;
+const entry = await getEntry("articles", `community1/${slug}`);
+
+const content = marked.parse(entry?.data.content);
+---
+<div>
+    content
+	<article set:html={content} />
+	
+</div>
+
+

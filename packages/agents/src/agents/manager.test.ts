@@ -10,16 +10,12 @@ import { crawlNewsWithTopic } from "./curator";
 import { deployArticles } from "./manager";
 
 describe(
-    "ManagerAgent",
-    () => {
-        it('deploy', async () => {
-
-            const articles = [
-                'article content 1',
-                'article content 2',
-            ]
-            await deployArticles(articles);
-
-        })
-
-    }, 60 * 1000);
+	"ManagerAgent",
+	() => {
+		it("deploy", async () => {
+			const articles = ["article content 1", "article content 2"];
+			await deployArticles(articles);
+		});
+	},
+	60 * 1000,
+);

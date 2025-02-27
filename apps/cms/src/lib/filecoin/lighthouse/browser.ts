@@ -71,7 +71,7 @@ export const uploadFiles = async <T extends boolean>(
 
 	const isWrapWithDirectory = isDirectory || files.length > 1;
 
-	let endpoint = createLighthouseEndpoint(isWrapWithDirectory);
+	const endpoint = createLighthouseEndpoint(isWrapWithDirectory);
 
 	const token = `Bearer ${accessToken}`;
 

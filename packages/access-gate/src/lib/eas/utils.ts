@@ -1,40 +1,40 @@
 export type EasData = {
-  eas: string;
-  easAttestedByMemberSchema: string;
-  gqlBaseUrl: string;
-  baseUrl: string;
+	eas: string;
+	easAttestedByMemberSchema: string;
+	gqlBaseUrl: string;
+	baseUrl: string;
 };
 
 export type SupportedChains = "sepolia" | "baseSepolia" | "optimismSepolia";
 
 export function getEasDataByChain(
-  chain: SupportedChains = "baseSepolia",
+	chain: SupportedChains = "baseSepolia",
 ): EasData {
-  const chainData = {
-    sepolia: {
-      eas: "0x0000000000000000000000000000000000000000",
-      easAttestedByMemberSchema: "0x0000000000000000000000000000000000000000",
-      gqlBaseUrl: "https://sepolia.easscan.org/graphql",
-      baseUrl: "https://sepolia.easscan.org",
-    },
-    baseSepolia: {
-      eas: "0x4200000000000000000000000000000000000021",
-      easAttestedByMemberSchema:
-        "0xb289765ce7c34a78028312dcd0e25792d258d66cb86a1c924352df646f6c0f8d",
-      gqlBaseUrl: "https://base-sepolia.easscan.org/graphql",
-      baseUrl: "https://base-sepolia.easscan.org",
-    },
-    optimismSepolia: {
-      eas: "0x0000000000000000000000000000000000000000",
-      easAttestedByMemberSchema: "0x0000000000000000000000000000000000000000",
-      gqlBaseUrl: "https://optimism-sepolia.easscan.org/graphql",
-      baseUrl: "https://optimism-sepolia.easscan.org",
-    },
-  };
+	const chainData = {
+		sepolia: {
+			eas: "0x0000000000000000000000000000000000000000",
+			easAttestedByMemberSchema: "0x0000000000000000000000000000000000000000",
+			gqlBaseUrl: "https://sepolia.easscan.org/graphql",
+			baseUrl: "https://sepolia.easscan.org",
+		},
+		baseSepolia: {
+			eas: "0x4200000000000000000000000000000000000021",
+			easAttestedByMemberSchema:
+				"0xb289765ce7c34a78028312dcd0e25792d258d66cb86a1c924352df646f6c0f8d",
+			gqlBaseUrl: "https://base-sepolia.easscan.org/graphql",
+			baseUrl: "https://base-sepolia.easscan.org",
+		},
+		optimismSepolia: {
+			eas: "0x0000000000000000000000000000000000000000",
+			easAttestedByMemberSchema: "0x0000000000000000000000000000000000000000",
+			gqlBaseUrl: "https://optimism-sepolia.easscan.org/graphql",
+			baseUrl: "https://optimism-sepolia.easscan.org",
+		},
+	};
 
-  if (!(chain in chainData)) {
-    throw new Error(`Unsupported chain: ${chain}`);
-  }
+	if (!(chain in chainData)) {
+		throw new Error(`Unsupported chain: ${chain}`);
+	}
 
-  return chainData[chain];
+	return chainData[chain];
 }

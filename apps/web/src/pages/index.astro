@@ -1,11 +1,56 @@
 ---
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
+	<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bloomberg-Inspired Website</title>
+  </head>
+  <body class="bg-background font-sans text-text">
+    <Header />
+    <main class="container mx-auto px-6 py-8">
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold mb-4">Top Headlines</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <article key={i} class="bg-white p-4 shadow rounded">
+              <h3 class="text-xl font-semibold mb-2">
+                Headline {i + 1}
+              </h3>
+              <p class="text-sm mb-2">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt quam eu aliquet ultricies.
+              </p>
+              <a href="#" class="text-primary text-sm font-medium hover:underline">
+                Read more &rarr;
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold mb-4">Markets Overview</h2>
+        <div class="bg-white p-6 shadow rounded">
+          <p class="text-sm">
+            Market data and insights will be displayed here. Use shadcn UI cards to present various market indices in a Bloomberg style.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer class="bg-white mt-12 border-t py-6">
+      <div class="container mx-auto px-6 text-center text-sm text-gray-600">
+        &copy; {new Date().getFullYear()} Bloomberg-Inspired Website. All rights reserved.
+      </div>
+    </footer>
+  </body>
+</html>
 	<Welcome />
 </Layout>

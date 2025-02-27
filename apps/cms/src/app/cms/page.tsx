@@ -4,16 +4,46 @@ import { ReviewersCard } from "@/app/cms/_components/ReviewersCard";
 import { TokenGateCard } from "@/app/cms/_components/TokenGateCard";
 import { TopicsCard } from "@/app/cms/_components/TopicsCard";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { getCMSWhitelistedAddresses } from "@repo/data-fetch/eas";
+import { useChainId } from "wagmi";
 
 const CMSPage = () => {
   const [mounted, setMounted] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const { address } = useAccount();
+  const chainId = useChainId();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!address) return;
+      const whitelistedAddresses = await getCMSWhitelistedAddresses(chainId);
+      setIsAuthorized(whitelistedAddresses.includes(address));
+    };
+
+    checkAccess();
+  }, [address, chainId]);
+
+  if (!mounted) return null;
+
+  if (!address) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl">Please connect your wallet to access the CMS</p>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl">You are not authorized to access the CMS</p>
+      </div>
+    );
   }
 
   return (

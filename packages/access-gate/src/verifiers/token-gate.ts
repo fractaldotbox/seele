@@ -61,11 +61,11 @@ export class TokenGateVerifier implements IVerifier {
 
     try {
       // First verify if the contract exists and has code
-      const code = await publicClient.getBytecode({
+      const code = await publicClient.getCode({
         address: criteria.contractAddress as `0x${string}`,
       });
 
-      if (!code) {
+      if (code === "0x") {
         console.error(
           `[checkTokenBalance] No contract found at address: ${criteria.contractAddress}`,
         );

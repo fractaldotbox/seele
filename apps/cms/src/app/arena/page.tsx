@@ -105,11 +105,7 @@ export default function Home() {
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold text-red-500">Access Denied</h2>
           <p className="text-lg">
-            You need to hold the required tokens to access this page.
-          </p>
-          <p className="text-sm text-gray-600">
-            Required: Minimum 1 token from contract
-            0xd369B2b99CC98FC25aF686e132fB10dE5C7349a6 on Base Sepolia
+            You need to be part of the DAO to access the Arena.
           </p>
         </div>
       </div>

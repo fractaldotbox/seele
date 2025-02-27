@@ -11,10 +11,10 @@ import { createStorage } from "unstorage";
 <<<<<<< HEAD
 =======
 import {
-  uploadBlob,
-  createEthStorage,
-  uploadFileToDirectory,
   FileType,
+  createEthStorage,
+  uploadBlob,
+  uploadFileToDirectory,
 } from "@seele/data-fetch";
 >>>>>>> main
 
@@ -34,11 +34,10 @@ export const persist = async (
 ) => {
   const { namespace, contentKey, content } = data;
   privateKey: string,
-    data: {
+    data: 
     namespace: string;
     contentKey: string;
-    content: string;
-  },
+    content: string;,
 ) => {
   const { namespace, contentKey, content } = data;
 

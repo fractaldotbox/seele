@@ -37,11 +37,15 @@ const CMSPage = () => {
       </div>
     );
   }
-
   if (!isAuthorized) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">You are not authorized to access the CMS</p>
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-red-500">Access Denied</h2>
+          <p className="text-lg">
+            You need to be authorized to access the CMS.
+          </p>
+        </div>
       </div>
     );
   }

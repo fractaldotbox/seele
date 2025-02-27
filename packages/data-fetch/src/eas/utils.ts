@@ -1,11 +1,4 @@
-export type EasData = {
-	eas: string;
-	easAttestedByMemberSchema: string;
-	gqlBaseUrl: string;
-	baseUrl: string;
-};
-
-export type SupportedChains = "sepolia" | "baseSepolia" | "optimismSepolia";
+import type { EasData, SupportedChains } from "./types";
 
 export function getEasDataByChain(
 	chain: SupportedChains = "baseSepolia",
@@ -37,4 +30,19 @@ export function getEasDataByChain(
 	}
 
 	return chainData[chain];
+}
+
+export function getChainNameFromId(chainId: number): SupportedChains {
+	const chainIdMap: Record<number, SupportedChains> = {
+		11155111: "sepolia",
+		84532: "baseSepolia",
+		11155420: "optimismSepolia",
+	};
+
+	const chainName = chainIdMap[chainId];
+	if (!chainName) {
+		throw new Error(`Unsupported chain ID: ${chainId}`);
+	}
+
+	return chainName;
 }

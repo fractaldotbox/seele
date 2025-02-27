@@ -2,6 +2,7 @@
 
 import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
 import type { PropsWithChildren } from "react";
+import { useDisconnect } from "wagmi";
 import { Button } from "../ui/button";
 
 export const PrivyLoginProvider = ({
@@ -39,10 +40,17 @@ export const PrivyLogin = () => {
 
 export const PrivyLogout = () => {
 	const { authenticated: isAuthenticated, logout } = usePrivy();
+	const { disconnect } = useDisconnect();
 	const disableLogout = !isAuthenticated;
 
 	return (
-		<Button disabled={disableLogout} onClick={logout}>
+		<Button
+			disabled={disableLogout}
+			onClick={async () => {
+				await disconnect();
+				await logout();
+			}}
+		>
 			Logout
 		</Button>
 	);

@@ -1,10 +1,11 @@
-import { Inter as NextInter } from "next/font/google";
+import { Kanit } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
 
-const inter = NextInter({
-	variable: "--font-inter",
+const kanit = Kanit({
+	variable: "--font-kanit",
+	weight: ["400", "500", "600", "700"],
 	subsets: ["latin"],
 });
 
@@ -21,7 +22,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="dark">
 			<body
-				className={`${inter.variable} antialiased min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-black to-black`}
+				className={`${kanit.variable} antialiased min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-black to-black`}
 			>
 				<Providers>
 					<Navbar />

@@ -6,7 +6,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useState } from "react";
-import { AddItemInput } from "./add-item-input";
+import { AddItemInput } from "../../../components/AddItemInput";
 
 export const TopicsCard = () => {
 	const [topicName, setTopicName] = useState("");
@@ -20,7 +20,7 @@ export const TopicsCard = () => {
 	};
 
 	return (
-		<Card className="w-[300px]">
+		<Card className="w-full">
 			<CardHeader>
 				<CardTitle>Topics</CardTitle>
 				<CardDescription>
@@ -35,9 +35,9 @@ export const TopicsCard = () => {
 					onAdd={handleAddTopic}
 				/>
 				<div className="flex flex-col gap-2">
-					{topics.map((topic, index) => (
+					{topics.map((topic) => (
 						<div
-							key={index}
+							key={topic}
 							className="flex items-center justify-between p-2 bg-secondary rounded-md"
 						>
 							<span>{topic}</span>

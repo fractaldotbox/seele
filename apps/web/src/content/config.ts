@@ -8,7 +8,6 @@ const articles = defineCollection({
 
         const keys = ["article1.md", "article2.md"].map(key => `community1/${key}`);
 
-
         const results = await Promise.all(
             keys.map(key => getUrl(key)).map(
                 url => fetch(url).then(res => res.text())

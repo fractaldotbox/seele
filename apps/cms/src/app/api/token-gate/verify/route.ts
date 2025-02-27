@@ -1,10 +1,11 @@
+import { TokenGateRepository } from "@/lib/repository/token-gate.repository";
 import { TokenGateVerifier } from "@repo/access-gate/verifiers/token-gate";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { address, tokenGates } = body;
+    const { address } = body;
 
     if (!address) {
       return NextResponse.json(
@@ -12,6 +13,11 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    const tokenGateRepository = new TokenGateRepository();
+    const tokenGates = await tokenGateRepository.getAll();
+
+    console.log("tokenGates", tokenGates);
 
     const verifier = new TokenGateVerifier();
     const result = await verifier.verify(address, tokenGates);

@@ -58,6 +58,9 @@ export const TokenGateCard = ({
   const [whitelist, setWhitelist] = useState<string[]>(existingWhitelist);
   const [isWhitelistLoading, setIsWhitelistLoading] = useState<boolean>(false);
 
+  // Add loading state
+  const [isAddingTokenGate, setIsAddingTokenGate] = useState(false);
+
   useEffect(() => {
     const fetchWhitelist = async () => {
       setIsWhitelistLoading(true);
@@ -93,6 +96,55 @@ export const TokenGateCard = ({
         minBalance,
         tokenType,
       };
+
+      const addTokenGate = async () => {
+        setIsAddingTokenGate(true);
+        try {
+          const response = await fetch("/api/token-gate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              criteria: [newTokenGate],
+            }),
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to add token gate: ${response.statusText}`);
+          }
+          const data = await response.json();
+          if (!data) {
+            throw new Error("No data returned from server");
+          }
+          if (!data.success) {
+            throw new Error(`Failed to add token gate: ${data.error}`);
+          }
+
+          // get all from token gate repository
+          const tokenGateResponse = await fetch("/api/token-gate");
+          if (!tokenGateResponse.ok) {
+            throw new Error(
+              `Failed to get token gates: ${tokenGateResponse.statusText}`,
+            );
+          }
+          const tokenGateData = await tokenGateResponse.json();
+          if (!tokenGateData) {
+            throw new Error("No data returned from server");
+          }
+          if (!tokenGateData.criteria) {
+            throw new Error("No criteria returned from server");
+          }
+          const newTokenGates = tokenGateData.criteria;
+
+          updateTokenGates([...newTokenGates]);
+          setContractAddress("");
+        } catch (error) {
+          console.error(`[addTokenGate] Error adding token gate:`, error);
+        } finally {
+          setIsAddingTokenGate(false);
+        }
+      };
+      addTokenGate();
 
       updateTokenGates([...tokenGates, newTokenGate]);
       setContractAddress("");
@@ -160,6 +212,7 @@ export const TokenGateCard = ({
                   value={contractAddress}
                   onChange={setContractAddress}
                   onAdd={handleAddTokenGate}
+                  disabled={isAddingTokenGate}
                 />
                 <div className="flex gap-2">
                   <select
@@ -168,6 +221,7 @@ export const TokenGateCard = ({
                     onChange={(e) =>
                       setTokenType(e.target.value as "ERC20" | "ERC721")
                     }
+                    disabled={isAddingTokenGate}
                   >
                     <option value="ERC20">ERC20</option>
                     <option value="ERC721">ERC721</option>
@@ -176,6 +230,7 @@ export const TokenGateCard = ({
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     value={chainId}
                     onChange={(e) => setChainId(Number(e.target.value))}
+                    disabled={isAddingTokenGate}
                   >
                     <option value={11155111}>Ethereum Sepolia</option>
                     <option value={84532}>Base Sepolia</option>
@@ -186,6 +241,7 @@ export const TokenGateCard = ({
                     placeholder="Min balance"
                     value={minBalance}
                     onChange={(e) => setMinBalance(e.target.value)}
+                    disabled={isAddingTokenGate}
                   />
                 </div>
               </div>
@@ -203,7 +259,7 @@ export const TokenGateCard = ({
                   >
                     <div className="flex flex-col min-w-0 flex-1">
                       <span className="truncate text-sm font-medium">
-                        {gate.contractAddress}
+                        {`${gate.contractAddress.slice(0, 6)}...${gate.contractAddress.slice(-4)}`}
                       </span>
                       <div className="flex gap-2 text-xs text-muted-foreground">
                         <span>{gate.tokenType}</span>

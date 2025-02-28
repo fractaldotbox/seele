@@ -1,18 +1,23 @@
 import { createAgent } from "@statelyai/agent";
 import { beforeAll, describe, expect, it } from "vitest";
-import { agentParamsAuthor, writeAndPersist, writeArticle } from "./author";
+import {
+	agentParamsAuthor,
+	submitArticle,
+	writeAndPersist,
+	writeArticle,
+} from "./author";
 
 describe(
 	"AuthorAgent",
 	() => {
 		let storage: Storage;
-
-		beforeAll(async () => {});
 		const context = {
 			topic: "security of dApps in Ethereum",
 			editorialDirection: "Be Detailed",
 			researchContext: "$10k is loss last week",
 		};
+
+		beforeAll(async () => {});
 
 		it("#writeArticle", async () => {
 			const agent = createAgent(agentParamsAuthor);
@@ -21,7 +26,7 @@ describe(
 			console.log("article", article);
 		});
 
-		it.only("#writeArticle and persist", async () => {
+		it("#writeArticle and persist", async () => {
 			const agent = createAgent(agentParamsAuthor);
 
 			const contentKey = "article1.md";
@@ -29,6 +34,19 @@ describe(
 			const results = await writeAndPersist(agent)(contentKey, context);
 
 			console.log("results", results);
+		});
+
+		it("#submitArticle", async () => {
+			await submitArticle("article1.md");
+		});
+
+		it.only("write and submmit", async () => {
+			const contentKey = "article1.md";
+			const agent = createAgent(agentParamsAuthor);
+			const url = await writeAndPersist(agent)(contentKey, context);
+			const results = await submitArticle(contentKey);
+
+			console.log(results);
 		});
 	},
 	300 * 1000,

@@ -1,9 +1,18 @@
 import { openai } from "@ai-sdk/openai";
 import type { Agent } from "@statelyai/agent";
 import { generateText } from "ai";
+import { http, type Hex, createWalletClient, custom, stringToHex } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { sepolia } from "viem/chains";
 import type z from "zod";
 import { persistWithDirectory } from "../storage";
+import { addressEditor } from "./address-book";
 import type { ResearchResult } from "./researcher";
+
+// TODO use different directory per namespace
+const directoryAddress = "0x30B00979c33F826BCF7e182545A3353aD97e1C42";
+
+const privateKeyAuthor = process.env.PRIVATE_KEY_AUTHOR! as Hex;
 
 export const agentParamsAuthor = {
 	name: "author",
@@ -54,19 +63,45 @@ export const writeArticle =
 
 export const writeAndPersist =
 	(agent: Agent<any, any>) => async (contentKey: string, context: any) => {
-		const privateKeyAgent = process.env.PRIVATE_KEY_AGENT!;
-
 		const article = await writeArticle(agent)(context);
 
 		await persistWithDirectory(
 			{
-				privateKey: privateKeyAgent,
-				directoryAddress: "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8",
+				privateKey: privateKeyAuthor,
+				directoryAddress,
 			},
 			{
-				namespace: "community1",
+				// namespace: "community1",
 				contentKey,
 				content: article,
 			},
 		);
+
+		const url = createArticleUrl(directoryAddress, contentKey);
+		return url;
 	};
+
+export const walletClient = createWalletClient({
+	chain: sepolia,
+	transport: http(),
+});
+
+const createArticleUrl = (directoryAddress: string, key: string) => {
+	return `https://${directoryAddress}.3337.w3link.io/${key}`;
+};
+
+export const submitArticle = async (key: string) => {
+	const account = privateKeyToAccount(privateKeyAuthor);
+
+	const url = createArticleUrl(directoryAddress, key);
+	const hash = await walletClient.sendTransaction({
+		account,
+		to: addressEditor as Hex,
+		value: 10n,
+		data: stringToHex([url].join(";")),
+	});
+	return {
+		hash,
+		url,
+	};
+};

@@ -266,6 +266,9 @@ importers:
       ethers:
         specifier: v6.13.5
         version: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      graphql-request:
+        specifier: ^6.1.0
+        version: 6.1.0(encoding@0.1.13)(graphql@16.10.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -294,6 +297,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@seele/access-gate':
+        specifier: workspace:*
+        version: link:../access-gate
       '@seele/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config

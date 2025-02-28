@@ -1,12 +1,18 @@
 import { openai } from "@ai-sdk/openai";
 import type { Agent } from "@statelyai/agent";
 import { generateText } from "ai";
+import { http, type Hex, createWalletClient, custom, stringToHex } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { sepolia } from "viem/chains";
 import type z from "zod";
 import { persistWithDirectory } from "../storage";
+import { addressEditor } from "./address-book";
 import type { ResearchResult } from "./researcher";
-import { createWalletClient, custom, http } from 'viem'
-import { sepolia } from 'viem/chains'
 
+// TODO use different directory per namespace
+const directoryAddress = "0x30B00979c33F826BCF7e182545A3353aD97e1C42";
+
+const privateKeyAuthor = process.env.PRIVATE_KEY_AUTHOR! as Hex;
 
 export const agentParamsAuthor = {
 	name: "author",
@@ -16,20 +22,20 @@ export const agentParamsAuthor = {
 
 export const writeArticle =
 	(agent: Agent<any, any>) =>
-		async ({
-			topic,
-			editorialDirection,
-			researchContext,
-			wordCount = 600,
-		}: {
-			topic: string;
-			editorialDirection: string;
-			researchContext: z.infer<typeof ResearchResult>;
-			wordCount?: number;
-		}) => {
-			const result = await generateText({
-				model: agent.model,
-				prompt: `Write an article base on news of below topic and context
+	async ({
+		topic,
+		editorialDirection,
+		researchContext,
+		wordCount = 600,
+	}: {
+		topic: string;
+		editorialDirection: string;
+		researchContext: z.infer<typeof ResearchResult>;
+		wordCount?: number;
+	}) => {
+		const result = await generateText({
+			model: agent.model,
+			prompt: `Write an article base on news of below topic and context
 
         <Topic>
         ${topic}
@@ -47,50 +53,55 @@ export const writeArticle =
         
         Write in around ${wordCount} words.
         `,
-			});
+		});
 
-			return result?.text;
-		};
+		return result?.text;
+	};
 
 // const agent = createAgent(agentParamsAuthor);
 // mountObservability(agent);
 
 export const writeAndPersist =
 	(agent: Agent<any, any>) => async (contentKey: string, context: any) => {
-		const privateKeyAgent = process.env.PRIVATE_KEY_AGENT!;
-
 		const article = await writeArticle(agent)(context);
 
 		await persistWithDirectory(
 			{
-				privateKey: privateKeyAgent,
-				directoryAddress: "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8",
+				privateKey: privateKeyAuthor,
+				directoryAddress,
 			},
 			{
-				namespace: "community1",
+				// namespace: "community1",
 				contentKey,
 				content: article,
 			},
 		);
+
+		const url = createArticleUrl(directoryAddress, contentKey);
+		return url;
 	};
 
 export const walletClient = createWalletClient({
 	chain: sepolia,
 	transport: http(),
-})
+});
 
+const createArticleUrl = (directoryAddress: string, key: string) => {
+	return `https://${directoryAddress}.3337.w3link.io/${key}`;
+};
 
+export const submitArticle = async (key: string) => {
+	const account = privateKeyToAccount(privateKeyAuthor);
 
-export const submitArticle = async () => {
-	const privateKeyEditor = '0xbd6d633b89d6cca1c1d4e67316d073cf8a508d544a5fc496270862f015d2ee0f';
-	const editorAddress = '0x70997970c51812dc3a010c7d01b50e0d17dc79c8';
-
-	const [account] = await walletClient.getAddresses()
-
-	console.log('acount', account)
-	// const hash = await walletClient.sendTransaction({
-	// 	account,
-	// 	to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
-	// 	value: 1000000000000000000n
-	// })
-}
+	const url = createArticleUrl(directoryAddress, key);
+	const hash = await walletClient.sendTransaction({
+		account,
+		to: addressEditor as Hex,
+		value: 10n,
+		data: stringToHex([url].join(";")),
+	});
+	return {
+		hash,
+		url,
+	};
+};

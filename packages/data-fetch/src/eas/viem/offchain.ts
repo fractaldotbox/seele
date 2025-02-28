@@ -1,10 +1,4 @@
 import {
-	OFFCHAIN_ATTESTATION_TYPES,
-	type OffchainAttestationTypedData,
-	type OffchainAttestationVersion,
-} from "../sdk/offchain/offchain";
-import { getOffchainUID } from "../sdk/offchain/offchain-utils";
-import {
 	http,
 	type Account,
 	type Address,
@@ -12,6 +6,12 @@ import {
 	type Hex,
 	createWalletClient,
 } from "viem";
+import {
+	OFFCHAIN_ATTESTATION_TYPES,
+	type OffchainAttestationTypedData,
+	type OffchainAttestationVersion,
+} from "../sdk/offchain/offchain";
+import { getOffchainUID } from "../sdk/offchain/offchain-utils";
 
 export interface OffchainAttestationParams {
 	schema: string;

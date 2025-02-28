@@ -5,8 +5,7 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@seele/data-fetch/*": ["../../packages/data-fetch/src/*"],
-			"@seele/typescript-config/*": ["../../packages/typescript-config/*"],
-			
+			"@seele/typescript-config/*": ["../../packages/typescript-config/*"]
 		}
 	},
 	"include": ["src"],

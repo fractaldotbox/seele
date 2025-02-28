@@ -317,6 +317,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^1.1.13
         version: 1.1.13(zod@3.24.2)
+      '@ethereum-attestation-service/eas-sdk':
+        specifier: ^2.7.0
+        version: 2.7.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       '@seele/data-fetch':
         specifier: workspace:*
         version: link:../data-fetch
@@ -332,6 +335,12 @@ importers:
       ai:
         specifier: ^4.1.46
         version: 4.1.46(react@19.0.0)(zod@3.24.2)
+      ethers:
+        specifier: v6.13.5
+        version: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      graphql-request:
+        specifier: ^6.1.0
+        version: 6.1.0(encoding@0.1.13)(graphql@16.10.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -360,6 +369,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@seele/access-gate':
+        specifier: workspace:*
+        version: link:../access-gate
       '@seele/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -387,6 +399,9 @@ importers:
       '@ensdomains/ensjs':
         specifier: ^4.0.2
         version: 4.0.2(encoding@0.1.13)(typescript@5.7.3)(viem@2.23.5(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+      '@ethereum-attestation-service/eas-sdk':
+        specifier: ^2.7.0
+        version: 2.7.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -11282,11 +11297,11 @@ snapshots:
 
   '@types/bn.js@4.11.6':
     dependencies:
-      '@types/node': 20.17.19
+      '@types/node': 22.13.0
 
   '@types/bn.js@5.1.6':
     dependencies:
-      '@types/node': 20.17.19
+      '@types/node': 22.13.0
 
   '@types/connect@3.4.38':
     dependencies:
@@ -11389,7 +11404,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.17.19
+      '@types/node': 22.13.0
 
   '@types/react-dom@19.0.3(@types/react@19.0.8)':
     dependencies:
@@ -11409,7 +11424,7 @@ snapshots:
 
   '@types/secp256k1@4.0.6':
     dependencies:
-      '@types/node': 20.17.19
+      '@types/node': 22.13.0
 
   '@types/stylis@4.2.5': {}
 

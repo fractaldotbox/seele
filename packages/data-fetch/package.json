@@ -29,8 +29,9 @@
 	},
 	"dependencies": {
 		"@ensdomains/ensjs": "^4.0.2",
-		"ethstorage-sdk": "^3.0.0",
+		"@ethereum-attestation-service/eas-sdk": "^2.7.0",
 		"dotenv": "^16.4.7",
+		"ethstorage-sdk": "^3.0.0",
 		"graphql": "^16.8.1",
 		"graphql-request": "^6.1.0",
 		"viem": "^2.23.5"

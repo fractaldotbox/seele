@@ -4,6 +4,7 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 import { getEasDataByChain } from "@seele/access-gate/lib/eas/utils";
 import { gql, rawRequest } from "graphql-request";
+import _ from "lodash";
 import type { Address } from "viem";
 import { baseSepolia } from "viem/chains";
 import { createEthstorageArticleUrl } from "../adapters/utils";
@@ -27,10 +28,10 @@ export const GetAttestationByParams = gql`
   }
 `;
 
-const searchAttestationsWithParams = async (
+export const searchAttestationsWithParams = async (
 	addressEditor: Address,
 	{ chain }: { chain: any },
-): Promise<Attestation | null> => {
+): Promise<Attestation[] | null> => {
 	const { easAttestedByEditorSchema, gqlBaseUrl } = getEasDataByChain(chain);
 
 	const variables = {
@@ -49,7 +50,7 @@ const searchAttestationsWithParams = async (
 			attestations: Attestation[];
 		}>(gqlBaseUrl, GetAttestationByParams, variables);
 
-		return data.attestations[0] || null;
+		return data.attestations || null;
 	} catch (error) {
 		console.error("GraphQL query error:", error);
 		return null;
@@ -78,18 +79,25 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 	}
 };
 
+export const pullAttestations = async () => {
+	const attestations = await searchAttestationsWithParams(
+		addressEditor as Address,
+		{
+			chain: "baseSepolia",
+		},
+	);
+
+	console.log("attestations", attestations);
+
+	return attestations;
+};
+
 export const verifyAttestation = async (
+	attestation: Attestation | null,
 	directoryAddress: string,
 	key: string,
 ) => {
 	try {
-		const attestation = await searchAttestationsWithParams(
-			addressEditor as Address,
-			{
-				chain: "baseSepolia",
-			},
-		);
-
 		if (!attestation) return false;
 
 		console.log("attestation", attestation);
@@ -137,11 +145,32 @@ export type ArticleMeta = {
 	directoryAddress: string;
 };
 
-export const verifyAndDeploy = async (articlesMeta: ArticleMeta[]) => {
+export const verifyAndDeploy = async (
+	attestations: Attestation[],
+	articlesMeta: ArticleMeta[],
+) => {
 	for (let i = 0; i < articlesMeta.length; i++) {
 		const { key, directoryAddress } = articlesMeta[i]!;
-		// const isEditorApproved = await verifyAttestation(directoryAddress, key);
-		const isEditorApproved = true;
+
+		// find corr. attestaitons.
+		// TODO receipent author for easier indexing
+		const attestation = attestations.find((attestation) => {
+			const parsed = JSON.parse(attestation.data);
+
+			const contentKey = parsed?.find((item: any) => item.name === "key")?.value
+				?.value;
+			return contentKey === key;
+		});
+
+		// _.findIndex(attestations, (attestation: any) => {});
+
+		// const isEditorApproved = true;
+
+		const isEditorApproved = verifyAttestation(
+			attestation!,
+			directoryAddress,
+			key,
+		);
 		if (!isEditorApproved) {
 			console.error("Invalid attestation", key, directoryAddress);
 			return false;

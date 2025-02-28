@@ -5,7 +5,12 @@ import { waitFor } from "xstate";
 import { TOPICS_ETH } from "../fixture";
 
 import { directoryAddressAuthor } from "./address-book";
-import { deployArticles, verifyAndDeploy, verifyAttestation } from "./manager";
+import {
+	deployArticles,
+	pullAttestations,
+	verifyAndDeploy,
+	verifyAttestation,
+} from "./manager";
 
 describe(
 	"ManagerAgent",
@@ -16,7 +21,9 @@ describe(
 		});
 
 		it("verify article attested by editor", async () => {
+			const attestations = await pullAttestations();
 			const results = await verifyAttestation(
+				attestations?.[0]!,
 				directoryAddressAuthor,
 				"article1.md",
 			);
@@ -24,7 +31,9 @@ describe(
 		});
 
 		it("verify article not attested by editor", async () => {
+			const attestations = await pullAttestations();
 			const results = await verifyAttestation(
+				attestations?.[0]!,
 				directoryAddressAuthor,
 				"article3.md",
 			);
@@ -32,6 +41,7 @@ describe(
 		});
 
 		it.only("verify and deploy artilces", async () => {
+			const attestations = await pullAttestations();
 			const articleMetas = [
 				{
 					key: "article1.md",
@@ -46,7 +56,7 @@ describe(
 				// 	directoryAddress: directoryAddressAuthor,
 				// },
 			];
-			await verifyAndDeploy(articleMetas);
+			await verifyAndDeploy(attestations, articleMetas);
 		});
 	},
 	60 * 1000,

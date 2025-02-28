@@ -6,27 +6,71 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { useLocalStorage } from "usehooks-ts";
+import type { HumanityVerification } from "@/lib/types";
+import { verifyHumanity } from "@/lib/humanity";
 
 interface VerifyHumanityModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+// Add interface for the storage type
 export const VerifyHumanityModal = ({
   isOpen,
   onOpenChange,
 }: VerifyHumanityModalProps) => {
   const [proof, setProof] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { address } = useAccount();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_humanityVerification, setHumanityVerification] =
+    useLocalStorage<HumanityVerification>("humanityVerification", {
+      isHuman: false,
+      address: "",
+      proof: "",
+    });
 
   const handleProofSubmit = async () => {
     try {
-      // TODO: Implement proof verification logic
-      console.log("Submitting proof:", proof);
+      setIsVerifying(true);
+      setError(null);
+
+      let credential: unknown;
+      try {
+        credential = JSON.parse(proof);
+      } catch (error: unknown) {
+        console.error("Error parsing proof:", error);
+        setError("Invalid JSON format");
+        return;
+      }
+
+      console.log({ credentialFromModal: credential });
+
+      const isValid = await verifyHumanity(address as string, credential);
+
+      console.log({ isValid });
+
+      if (isValid) {
+        // Save verification state to localStorage
+        setHumanityVerification({
+          isHuman: true,
+          address: address as string,
+          proof: JSON.stringify(credential),
+        });
+        onOpenChange(false);
+      } else {
+        setError("Invalid proof");
+      }
     } catch (error) {
-      console.error("Error verifying proof:", error);
+      setError(error instanceof Error ? error.message : "Verification failed");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -69,12 +113,13 @@ export const VerifyHumanityModal = ({
                   onChange={(e) => setProof(e.target.value)}
                   className="min-h-[100px] font-mono"
                 />
+                {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button
                   className="w-full"
                   onClick={handleProofSubmit}
-                  disabled={!proof.trim()}
+                  disabled={!proof.trim() || isVerifying}
                 >
-                  Verify Proof
+                  {isVerifying ? "Verifying..." : "Verify Proof"}
                 </Button>
               </div>
             </TabsContent>

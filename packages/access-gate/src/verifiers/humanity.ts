@@ -8,7 +8,6 @@ import { verifyCredentials } from "../lib/humanity/queries";
 // verify that the person is a KYC-ed human according to humanity protocol
 export class HumanityProtocolVerifier implements IVerifier {
   name = "humanity-protocol-is-human";
-  issuerBaseUrl;
 
   async verify(
     address: string,

@@ -4,16 +4,42 @@ import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { PrivyLogin, PrivyLogout } from "./privy/privy-login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { VerifyHumanityModal } from "./VerifyHumanityModal";
+import { useLocalStorage } from "usehooks-ts";
+import type { HumanityVerification } from "@/lib/types";
+import { verifyHumanity } from "@/lib/humanity";
 
 export const Navbar = () => {
   const { authenticated: isAuthenticated } = usePrivy();
   const { address } = useAccount();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHumanityVerified, setIsHumanityVerified] = useState(false);
+  const [humanityVerification] = useLocalStorage<HumanityVerification>(
+    "humanityVerification",
+    {
+      isHuman: false,
+      address: "",
+      proof: "",
+    },
+  );
+
+  useEffect(() => {
+    if (address && humanityVerification.proof) {
+      const _verifyHumanity = async () => {
+        const isValid = await verifyHumanity(
+          address,
+          humanityVerification.proof,
+        );
+        setIsHumanityVerified(isValid);
+      };
+
+      _verifyHumanity();
+    }
+  }, [address, humanityVerification.proof]);
 
   return (
     <>
@@ -58,10 +84,14 @@ export const Navbar = () => {
                         {address.slice(0, 6)}...{address.slice(-4)}
                       </div>
                       <Badge
-                        variant={isHumanityVerified ? "default" : "destructive"}
+                        variant={
+                          humanityVerification.isHuman
+                            ? "default"
+                            : "destructive"
+                        }
                         className="ml-2"
                       >
-                        {isHumanityVerified
+                        {humanityVerification.isHuman
                           ? "Humanity Verified"
                           : "Humanity Not Verified"}
                       </Badge>

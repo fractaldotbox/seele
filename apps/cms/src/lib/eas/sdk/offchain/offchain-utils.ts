@@ -76,6 +76,53 @@ export const compactOffchainAttestationPackage = (
 	];
 };
 
+export const uncompactOffchainAttestationPackage = (
+	compacted: CompactAttestationShareablePackageObject,
+): AttestationShareablePackageObject => {
+	// ignore version and avoid duplication with offchain.ts
+	const version: OffchainAttestationVersion = compacted[16]
+		? compacted[16]
+		: OffchainAttestationVersion.Version2;
+
+	const attestTypes: EIP712MessageTypes =
+		OFFCHAIN_ATTESTATION_TYPES[version][0].types;
+
+	return {
+		sig: {
+			version,
+			domain: {
+				name: "EAS Attestation",
+				version: compacted[0],
+				chainId: BigInt(compacted[1]),
+				verifyingContract: compacted[2],
+			},
+			primaryType:
+				version === OffchainAttestationVersion.Legacy
+					? "Attestation"
+					: "Attest",
+			types: attestTypes,
+			signature: {
+				r: compacted[3],
+				s: compacted[4],
+				v: compacted[5],
+			},
+			uid: compacted[7],
+			message: {
+				version,
+				schema: compacted[8],
+				recipient: compacted[9] === "0" ? ZERO_ADDRESS : compacted[9],
+				time: BigInt(compacted[10]),
+				expirationTime: BigInt(compacted[11]),
+				refUID: compacted[12] === "0" ? zeroHash : compacted[12],
+				revocable: compacted[13],
+				data: compacted[14],
+				salt: compacted[17],
+			},
+		},
+		signer: compacted[6],
+	};
+};
+
 export const getOffchainUID = (params: {
 	version: number;
 	schema: string;

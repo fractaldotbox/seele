@@ -19,3 +19,9 @@ export const deployArticles = async (articles: string[]) => {
 		);
 	}
 };
+
+// offchain attestation
+
+export const validateProof = () => {
+
+}

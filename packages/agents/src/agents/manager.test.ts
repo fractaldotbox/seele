@@ -3,10 +3,7 @@ import type { Storage } from "unstorage";
 import { beforeAll, describe, expect, it } from "vitest";
 import { waitFor } from "xstate";
 import { TOPICS_ETH } from "../fixture";
-import { newsAgencyMachine } from "../news-state";
-import { initStorage } from "../storage";
-import { createEmbeddings, queryWithEmbeddings } from "../utils";
-import { crawlNewsWithTopic } from "./curator";
+
 import { deployArticles } from "./manager";
 
 describe(

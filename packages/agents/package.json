@@ -20,18 +20,20 @@
 		"typescript": "5.7.3"
 	},
 	"dependencies": {
-		"@seele/data-fetch": "workspace:*",
 		"@ai-sdk/openai": "^1.1.13",
+		"@ethereum-attestation-service/eas-sdk": "^2.7.0",
+		"@seele/data-fetch": "workspace:*",
 		"@statelyai/agent": "^1.1.6",
 		"@tavily/core": "^0.3.1",
 		"@types/lodash": "^4.17.15",
-		"viem": "2.23.5",
 		"ai": "^4.1.46",
+		"ethers": "v6.13.5",
 		"lodash": "^4.17.21",
 		"openai": "^4.85.4",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"unstorage": "^1.15.0",
+		"viem": "2.23.5",
 		"vitest": "^3.0.6",
 		"xstate": "^5.19.2",
 		"zod": "^3.24.2"

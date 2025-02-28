@@ -1,13 +1,13 @@
 import { createAgent } from "@statelyai/agent";
 import { beforeAll, describe, expect, it } from "vitest";
-import { agentParamsAuthor, writeAndPersist, writeArticle } from "./author";
+import { agentParamsAuthor, submitArticle, writeAndPersist, writeArticle } from "./author";
 
 describe(
 	"AuthorAgent",
 	() => {
 		let storage: Storage;
 
-		beforeAll(async () => {});
+		beforeAll(async () => { });
 		const context = {
 			topic: "security of dApps in Ethereum",
 			editorialDirection: "Be Detailed",
@@ -30,6 +30,10 @@ describe(
 
 			console.log("results", results);
 		});
+
+		it('#submitArticle', async () => {
+			await submitArticle();
+		})
 	},
 	300 * 1000,
 );

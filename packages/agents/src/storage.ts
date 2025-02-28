@@ -8,15 +8,6 @@ import {
   uploadFileToDirectory,
 } from "@repo/data-fetch";
 import { createStorage } from "unstorage";
-<<<<<<< HEAD
-=======
-import {
-  FileType,
-  createEthStorage,
-  uploadBlob,
-  uploadFileToDirectory,
-} from "@seele/data-fetch";
->>>>>>> main
 
 export const initStorage = () => {
   const storage = createStorage(/* opts */);
@@ -34,10 +25,10 @@ export const persist = async (
 ) => {
   const { namespace, contentKey, content } = data;
   privateKey: string,
-    data: 
-    namespace: string;
-    contentKey: string;
-    content: string;,
+    data:
+  namespace: string;
+  contentKey: string;
+  content: string;,
 ) => {
   const { namespace, contentKey, content } = data;
 

@@ -32,7 +32,7 @@ export const VerifyHumanityModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] transition-all duration-300 ease-in-out dialog-content">
         <DialogHeader>
           <DialogTitle>Verify Humanity</DialogTitle>
           <p className="text-sm text-gray-500">
@@ -46,32 +46,39 @@ export const VerifyHumanityModal = ({
             </Link>
           </p>
         </DialogHeader>
-
         <Tabs defaultValue="tab1" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="tab1">QR Verification</TabsTrigger>
             <TabsTrigger value="tab2">Copy-paste Verification</TabsTrigger>
           </TabsList>
-          <TabsContent value="tab1">
-            <div className="space-y-4 py-4">Coming Soon!</div>
-          </TabsContent>
-          <TabsContent value="tab2">
-            <div className="space-y-4 py-4">
-              <Textarea
-                placeholder="Paste your issued credential here..."
-                value={proof}
-                onChange={(e) => setProof(e.target.value)}
-                className="min-h-[100px] font-mono"
-              />
-              <Button
-                className="w-full"
-                onClick={handleProofSubmit}
-                disabled={!proof.trim()}
-              >
-                Verify Proof
-              </Button>
-            </div>
-          </TabsContent>
+          <div className="relative">
+            <TabsContent
+              value="tab1"
+              className="space-y-4 py-4 transition-all duration-300 ease-in-out"
+            >
+              <div>Coming Soon!</div>
+            </TabsContent>
+            <TabsContent
+              value="tab2"
+              className="space-y-4 py-4 transition-all duration-300 ease-in-out"
+            >
+              <div className="space-y-4">
+                <Textarea
+                  placeholder="Paste your proof here..."
+                  value={proof}
+                  onChange={(e) => setProof(e.target.value)}
+                  className="min-h-[100px] font-mono"
+                />
+                <Button
+                  className="w-full"
+                  onClick={handleProofSubmit}
+                  disabled={!proof.trim()}
+                >
+                  Verify Proof
+                </Button>
+              </div>
+            </TabsContent>
+          </div>
         </Tabs>
       </DialogContent>
     </Dialog>

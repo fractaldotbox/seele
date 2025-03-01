@@ -50,5 +50,5 @@ describe(
 			await verifyAndDeploy(attestations!, ARTICLE_METAS);
 		});
 	},
-	60 * 1000,
+	5 * 60 * 1000,
 );

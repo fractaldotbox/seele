@@ -67,7 +67,7 @@ export const reviewArticlesAndPersist =
 						directoryAddress,
 					},
 					{
-						namespace: `review-${soul.name}`,
+						namespace: `review-${soul.name.replace(".", "-")}`,
 						contentKey: article.key,
 						content: reviewed,
 					},

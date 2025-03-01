@@ -26,19 +26,19 @@ export const agentParamsFactChecker = {
 	events: {},
 };
 
-export const createFactCheckPromptParams = (query: string, facts: string[]) => {
+export const createFactCheckPromptParams = (claim: string, facts: string[]) => {
 	const newsContext = facts.join("\n");
 
 	const prompt = `
-    Facts are provided in the context. 
-  <Context>
-  
+    Facts are provided in the <Sources> below.
+
+  <Sources>
     ${newsContext}
-  </Context>
+  </Sources>
 
   Fact-check the following statement:
 
-  ${query}
+  ${claim}
 
 
   `;
@@ -50,7 +50,8 @@ export const createFactCheckPromptParams = (query: string, facts: string[]) => {
         
         Provide explanation and state what you can really confirm.
         
-        Provide citations on context you used to fact-check the statement and put the citation URL at citation_url
+        Provide citations on specific part of sources you used to fact-check the statement and put the citation URL at citation_url
+		Do not just say "context provided" or "the context"
 
         Provide confidence_level from 0-1 on how confident you are on the fact-checking result.
 
@@ -60,7 +61,8 @@ export const createFactCheckPromptParams = (query: string, facts: string[]) => {
         
         {
             "is_true": false,
-            "confidence_level": 0.8
+            "confidence_level": 0.8,
+			"claim": "Biden will be serving his 2nd term in 2026",
             "explanation": "Biden did not serve 2nd term of president"            
             "citations": "According to Polymarket market "2024 Election winner" , Biden served as president from 2021-2025 and loss the last election in 2025",
             "citation_url: "https://www.forbes.com/sites/digital-assets/2024/12/10/leak-reveals-russias-bid-for-bitcoin-reserve-amid-huge-2025-price-predictions/"
@@ -96,10 +98,10 @@ export const FactCheckResult = z
 	.describe("Result of fact checking if statement is true");
 
 export const identifyClaimWithKeywords =
-	(agent: Agent<any, any>) => async (query: string) => {
+	(agent: Agent<any, any>) => async (content: string) => {
 		const result = await generateObjectWithAgent(agent, {
 			schema: FactCheckQuery,
-			prompt: createRAGPrompt(query),
+			prompt: createRAGPrompt(content),
 		});
 
 		return result;
@@ -115,9 +117,10 @@ export const factCheckWithRAG =
 			storage,
 		);
 
+		console.log("relevantNews", relevantNews);
 		const params = createFactCheckPromptParams(
-			content,
-			relevantNews.map(({ item }) => item.value.content),
+			claimWithKeywords?.claim,
+			relevantNews.map(({ item }) => item?.value?.content || ""),
 		);
 
 		console.log("===fact check===");
@@ -127,7 +130,10 @@ export const factCheckWithRAG =
 
 		console.log("fact check results", results);
 
-		return results;
+		return {
+			...results,
+			claim: claimWithKeywords?.claim,
+		};
 	};
 
 // TODO polymarket data
@@ -160,9 +166,15 @@ export const findRelevantInfo = async (
 	});
 };
 
-export const createRAGPrompt = (query: string) => {
+export const createRAGPrompt = (content: string) => {
 	return `
-    identify 1-3 keywords in the query "${query}, delimited by "," Example: "Trump,Biden,election"
+	Identify and summarize a claim in the content in less than 10 words, the statement should be a claim that 
+	is clearly true or false.
+    Then identify 1-3 keywords in the claim, delimited by "," Example: "Trump,Biden,election"
+
+	<Content>
+	${content}
+	</Content>
     `;
 };
 
@@ -180,6 +192,7 @@ export const factCheckAndPersist =
 					storage,
 				);
 
+				console.log("results", factCheckResults);
 				await persistWithDirectory(
 					{
 						privateKey: privateKeyEditor,

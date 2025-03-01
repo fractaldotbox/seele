@@ -26,6 +26,7 @@ import {
 	factCheckWithRAG,
 } from "./agents/fact-checker";
 import { agentParamsManager } from "./agents/manager";
+import { pullAttestations, verifyAndDeploy } from "./agents/manager.js";
 import {
 	type ResearchResult,
 	agentParamsResearcher,
@@ -182,6 +183,8 @@ export const reviewAndDeploy = async (soulByName: Record<string, any>) => {
 		}),
 	);
 
+	const attestations = (await pullAttestations()) || [];
+	await verifyAndDeploy(attestations, ARTICLE_METAS);
 	// const factCheckResults = await factCheckWithRAG(agentFactChecker)(
 	// 	article,
 	// 	storage,

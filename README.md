@@ -9,7 +9,7 @@ SEELE is a CMS to build Autonomous website owend by agents, governed by communit
 
 Agents are powerful than ever. However, empowering agents to trade on Defi comes at risk of agents trading on misinformation, or compromised by various forms of data posioning. Oracles today are mostly limited to quantiative data (i.e. prices), and with increasing concern on deepfakes we're yet to see well integrated solutions on ["info-defense"](https://vitalik.eth.limo/general/2023/11/27/techno_optimism.html#info). 
 
-We also see dApps as the weakest link of security, often due to lack of decentralization. Recent hack with billions loss illustrated the risk of relying on trusted party for website infrastructure (CDN/DNS/JS).  
+We also see dApps as the weakest link of security, often due to lack of decentralization. Recent hack with billions loss illustrated the risk of relying on trusted party for website infrastructure (CDN/DNS/JS). Censorship vulnerabilities, insider attacks, project continuity risks are often undiscussed .
 
 AI provides new possibilites to create autonomous, trustless dApp with full control and ownership by agents, meanwhile how could we govern that as a community?
 
@@ -35,13 +35,30 @@ If LLM is "compressing the Internet", we want to enable community to "compress t
 ### User Interaction
 
 
-At CMS, Community member is able to setup topics of interested and community leadership that reviewer agents should impersonate.  
+At CMS, Community member is able to setup topics of interested and community leadership that reviewer agents should impersonate.  They can also set up token gating criteria on who is able to access arena, such as Proof of Humanity, attestation by community or token-gating (ERC20/ERC-721).
 
 At AgentArena, user can attest (with EAS) agent they preferred by comparing the output content. 
 
-At Explorer, user is able to analyze the information supplychain of the website, such as Reviewer agents's reviews, Fact Checker Agent's analysis etc.
+At Explorer, user is able to verify the information supplychain of the website, such as Reviewer agents's reviews, Fact Checker Agent's analysis and citations etc. This help the community to understand hoow agent systems work as a whole (compared to simply fine-tuning single LLM) and provide feedback as hyperparameters
 
 User can revisit the final website via web3:// protocol, which guarantee the censorship resistance and verifiability. 
+
+
+### Data Flow
+
+Before news generation, we make use of [n8n](https://n8n.io/) workflow engine to orchestrate data fetching and crawl data from news (Tavily), twitter, polymarket UMA oracle and store at Postgres / memory. 
+
+With the tweet data, we generate "soul" of community leaders such as vitalik.eth , by using multiple instance of LLM to summarizing chunks and then genearte a master system prompt for agent taking reviewer role.
+
+During news generation, AuthorAgent are supported by ResearcherAgent on facts and related news crawled from the internet, then first upload articles on its own FlatDirectory (on-chain blob), and send transaction to EditorAgent as submission.
+
+During review, Fact check agents will RAG and look for stored facts from Polymarket. Council of Reviewer Agents will review article and persist to Editor's FlatDirectory (which cna be seen on explorer)
+Rditor agent create EAS attestation with data including article.  
+
+
+When the website is deployed, content are stored on a [FlatDirectory](https://docs.ethstorage.io/dapp-developer-guide/tutorials/use-ethstorage-sdk-to-upload-and-download-files#id-2.1-create-flatdirectory) of EthStorage L2 (Quark) and accessible via gateway and [web3://](https://web3url.eth.1.w3link.io/). Template of dApp is pre-built and stored on another folder.
+
+
 
 
 ## The project architecture and development process
@@ -76,11 +93,14 @@ We used Humanity Protocol to guard who can attest for agent reputations on the A
 
 ## Key differentiators and uniqueness of the project
 
-Many projects do not emphasize the adversial environment agents are in or try to reduce risks of agent supply chain. 
 
-"AI as judges" without human governance is often backwards.
+We observe many projects do not emphasize the adversial environment agents are in or fail to reduce risks of supply chain of agents (data, codebase). 
+
+Vitalik discussed [blockchain can serve as "games" for AI.](https://vitalik.eth.limo/general/2024/01/30/cryptoai.html), where "AI as judges" has to be treat very carefully --- We believe create guardrails, human input, reputation systems for agents and increase interpreability is key.
 
 "Govern Agents with our Soul", SEELE offers a solution to gain benefits of agents with community guardrails, at the same time increase decentralization and security.
+
+
 
 ## Trade-offs and shortcuts while building
 

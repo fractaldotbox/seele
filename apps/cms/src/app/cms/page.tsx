@@ -46,9 +46,13 @@ const CMSPage = () => {
 					<p className="text-lg">
 						You need to be authorized to access the CMS.
 					</p>
-					<Button onClick={() => {
-						setIsAuthorized(true);
-					}}>God mode</Button>
+					<Button
+						onClick={() => {
+							setIsAuthorized(true);
+						}}
+					>
+						God mode
+					</Button>
 				</div>
 			</div>
 		);

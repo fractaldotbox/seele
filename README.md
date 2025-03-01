@@ -23,12 +23,7 @@ Agents and Human are welcomed to contribute and submit articles with proofs on f
 
 Reviewers impersonating personality of community leaders and FactCheck Agent will review articles with RAG with data on polymarket oracle and trusted domains. Editor Agent will then also take into consideration of agent reputation and attest for greenlight.
 
-ManagerAgent is then able to verify proofs and deploy a censorships resistantance, unstoppable website autonomously. Output and communications messages of are written on-chain for transparency and interpretability. 
-
-CMS access is token gated by members. Verified community member is able to guide the agents by selecting topics of interest and training data of AI reviewers (e.g. with vitalik's twitter), and attest content they prefer on AgentArena, similar to lmarena.ai
-
-If LLM is "compressing the Internet", we want to enable community to "compress the Soul" to orchestrate agents and achieve decentrailization. 
-
+ManagerAgent is then able to verify proofs and deploy a censorships resistantance, unstoppable website autonomously. 
 
 ## User Interaction and Data Flow
 
@@ -37,9 +32,9 @@ If LLM is "compressing the Internet", we want to enable community to "compress t
 
 At CMS, Community member is able to setup topics of interested and community leadership that reviewer agents should impersonate.  They can also set up token gating criteria on who is able to access arena, such as Proof of Humanity, attestation by community or token-gating (ERC20/ERC-721).
 
-At AgentArena, user can attest (with EAS) agent they preferred by comparing the output content. 
+At AgentArena, user can attest (with EAS) agent they preferred by comparing each's output side by side. 
 
-At Explorer, user is able to verify the information supplychain of the website, such as Reviewer agents's reviews, Fact Checker Agent's analysis and citations etc. This help the community to understand hoow agent systems work as a whole (compared to simply fine-tuning single LLM) and provide feedback as hyperparameters
+At Explorer, user is able to verify the information supplychain & proofs of the website, such as Reviewer agents's reviews, Fact Checker Agent's analysis. This help the community to understand hoow agent systems work as a whole (compared to simply fine-tuning single LLM) and provide feedback as hyperparameters
 
 User can revisit the final website via web3:// protocol, which guarantee the censorship resistance and verifiability. 
 
@@ -65,7 +60,10 @@ When the website is deployed, content are stored on a [FlatDirectory](https://do
 
 In the architecture a swarm of agents is employed, inspired by Chain of Agent (CoA) of Google which improves the interpreability. 
 
-At our demo of autonomous news agency, 
+Community has no direct access to the Agent's environment (or website deployment toolings), with agents fully owning the tools and keys.
+
+
+At our demo of autonomous news agency (https://thisweekin.eth.1.w3link.io/), 
 
 With a "Don't trust, verify" approach, any agent or human is able to submit content by sending a transaction to the Editor Agent.
 
@@ -81,11 +79,17 @@ Manager Agent will only incldue articles attested on EAS and deploy by updating 
 
 For the frontend of final website, we applied islands architecture where 90% of the site is static, and dynamic parts load from on-chain blob via ETHstorage. This ensure censorship resistance and security.
 
+Output and communications messages of are written on-chain for transparency and interpretability. 
+
+CMS access is token gated by members. Verified community member is able to guide the agents by selecting topics of interest and training data of AI reviewers (e.g. with vitalik's twitter), and attest content they prefer on AgentArena, similar to lmarena.ai
+
+If LLM is "compressing the Internet", we want to enable community to "compress the Soul" to orchestrate agents and achieve decentrailization. 
+
 
 ## Product Integrations
 
 We use ETHStorage as both the content storage/hosting layer and on-chain, verifiable agent communications data layer. 
-Web3:// is used for data retrieval by dApp and agents, ENS is used to point to correspondong directory address.
+Web3:// is used for data retrieval by dApp and agents, ENS is also used to point to correspondong directory address, via `contentcontract` TXT records
 
 We used EAS (Ethereum Attestation Service) for Editor to attest article, for user to attest Agent they prefer
 

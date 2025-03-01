@@ -14,146 +14,146 @@ const privateKeyStorage = process.env.PRIVATE_KEY_STORAGE;
 
 // const ethStorageRpc = rpc;
 const getExplorerUrl = (txHash: string) => {
-  return `https://explorer.beta.testnet.l2.quarkchain.io/tx/${txHash}`;
+	return `https://explorer.beta.testnet.l2.quarkchain.io/tx/${txHash}`;
 };
 
 export const createDirectory = async (
-  privateKey: string,
-  existingAddress?: string,
+	privateKey: string,
+	existingAddress?: string,
 ) => {
-  let address = existingAddress;
-  const params = {
-    rpc: new URL(rpc),
-    ethStorageRpc: new URL(ethStorageRpc),
-    privateKey,
-    address,
-  };
-  const flatDirectory = await FlatDirectory.create(params);
+	let address = existingAddress;
+	const params = {
+		rpc: new URL(rpc),
+		ethStorageRpc: new URL(ethStorageRpc),
+		privateKey,
+		address,
+	};
+	const flatDirectory = await FlatDirectory.create(params);
 
-  if (!existingAddress) {
-    address = await flatDirectory.deploy();
-    console.log("deployed", address);
-  }
+	if (!existingAddress) {
+		address = await flatDirectory.deploy();
+		console.log("deployed", address);
+	}
 
-  return {
-    flatDirectory,
-    directoryAddress: address!,
-  };
+	return {
+		flatDirectory,
+		directoryAddress: address!,
+	};
 };
 
 // ignore overflow
 export const downloadFileFromDirectoryAsync = async (
-  flatDirectory: FlatDirectory,
-  key: string,
+	flatDirectory: FlatDirectory,
+	key: string,
 ) => {
-  const buffers: Buffer[] = [];
+	const buffers: Buffer[] = [];
 
-  const callback = {
-    onProgress: (index, blobCount, data) => {
-      console.log("progress", index, blobCount);
-      buffers.push(data);
-    },
-    onFail: (err) => {
-      console.log("download error", err);
-    },
-    onFinish: () => {
-      console.log("download completed");
-    },
-  };
+	const callback = {
+		onProgress: (index, blobCount, data) => {
+			console.log("progress", index, blobCount);
+			buffers.push(data);
+		},
+		onFail: (err) => {
+			console.log("download error", err);
+		},
+		onFinish: () => {
+			console.log("download completed");
+		},
+	};
 
-  await flatDirectory.download(key, callback);
+	await flatDirectory.download(key, callback);
 
-  return Buffer.concat(buffers);
+	return Buffer.concat(buffers);
 };
 
 export const uploadFileToDirectoryAsync = (flatDirectory, request) => {
-  return new Promise((resolve, reject) => {
-    const callback = {
-      onProgress: (progress, count, isChange) => {
-        console.log("progress", progress);
-      },
-      onFail: (err) => {
-        reject(err);
-      },
-      onFinish: (totalUploadChunks, totalUploadSize, totalStorageCost) => {
-        console.log("totalUploadChunks", totalUploadSize, totalUploadChunks);
-        if (totalUploadSize === 0) {
-          console.log("File unchanged");
-        }
-        resolve({
-          totalUploadSize,
-        });
-      },
-    };
+	return new Promise((resolve, reject) => {
+		const callback = {
+			onProgress: (progress, count, isChange) => {
+				console.log("progress", progress);
+			},
+			onFail: (err) => {
+				reject(err);
+			},
+			onFinish: (totalUploadChunks, totalUploadSize, totalStorageCost) => {
+				console.log("totalUploadChunks", totalUploadSize, totalUploadChunks);
+				if (totalUploadSize === 0) {
+					console.log("File unchanged");
+				}
+				resolve({
+					totalUploadSize,
+				});
+			},
+		};
 
-    console.log("uploading:", request.key);
-    flatDirectory.upload({
-      ...request,
-      type: 2, // 1 for calldata and 2 for blob
-      callback,
-    });
-  });
+		console.log("uploading:", request.key);
+		flatDirectory.upload({
+			...request,
+			type: 2, // 1 for calldata and 2 for blob
+			callback,
+		});
+	});
 };
 
 export enum FileType {
-  Calldata = 1,
-  Blob = 2,
+	Calldata = 1,
+	Blob = 2,
 }
 
 export const uploadFileToDirectory = async (
-  privateKey: string,
-  directoryAddress: string,
-  request: any,
+	privateKey: string,
+	directoryAddress: string,
+	request: any,
 ) => {
-  const flatDirectory = await FlatDirectory.create({
-    rpc: rpc,
-    ethStorageRpc,
-    privateKey,
-    address: directoryAddress,
-  });
+	const flatDirectory = await FlatDirectory.create({
+		rpc: rpc,
+		ethStorageRpc,
+		privateKey,
+		address: directoryAddress,
+	});
 
-  return await uploadFileToDirectoryAsync(flatDirectory, request);
+	return await uploadFileToDirectoryAsync(flatDirectory, request);
 };
 
 export const uploadBlob = async (
-  ethStorage: EthStorage,
-  key: string,
-  dataBlob: Buffer,
+	ethStorage: EthStorage,
+	key: string,
+	dataBlob: Buffer,
 ) => {
-  const status = await ethStorage.write(key, dataBlob);
+	const status = await ethStorage.write(key, dataBlob);
 
-  console.log("uploadBlob status", status);
+	console.log("uploadBlob status", status);
 
-  return status;
+	return status;
 };
 
 export const uploadBlobs = async (
-  ethStorage: EthStorage,
-  keys: string[],
-  dataBlobs: Buffer[],
+	ethStorage: EthStorage,
+	keys: string[],
+	dataBlobs: Buffer[],
 ) => {
-  // TODO txn hashes
-  const status = await ethStorage.writeBlobs(keys, dataBlobs);
+	// TODO txn hashes
+	const status = await ethStorage.writeBlobs(keys, dataBlobs);
 
-  console.log("uploadBlobs status", status);
+	console.log("uploadBlobs status", status);
 
-  return status;
+	return status;
 };
 
 export const downloadBlob = async (ethStorage: EthStorage, key: string) => {
-  return await ethStorage.read(key);
+	return await ethStorage.read(key);
 };
 
 export const createEthStorage = async (privateKey: string) => {
-  return await EthStorage.create({
-    rpc,
-    ethStorageRpc: ethStorageRpc,
-    privateKey,
-  });
+	return await EthStorage.create({
+		rpc,
+		ethStorageRpc: ethStorageRpc,
+		privateKey,
+	});
 };
 
 export const readBlob = async (ethStorage: EthStorage, key: string) => {
-  const results = await ethStorage.read(key);
+	const results = await ethStorage.read(key);
 
-  return Buffer.from(results);
+	return Buffer.from(results);
 };

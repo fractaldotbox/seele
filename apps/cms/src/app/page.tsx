@@ -22,7 +22,7 @@ export default function Home() {
 				{/* Hero Section */}
 				<div className="text-center mb-12">
 					<h1 className="text-5xl font-bold mb-4 text-foreground">
-						Seele Protocol
+						SEELE
 					</h1>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
 						Giving DAOs a soul through AI-powered content generation and

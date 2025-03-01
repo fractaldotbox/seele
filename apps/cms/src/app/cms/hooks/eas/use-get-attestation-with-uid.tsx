@@ -43,39 +43,39 @@ const allAttestationsByQuery = gql`
 `;
 
 export type UseGetAttestationParams = {
-    uid: string;
-    chainId: number;
+	uid: string;
+	chainId: number;
 };
 
 export type UseGetAttestationsReturnType = UseQueryResult<Attestation, Error>;
 
 export const createGetAttestationWithUidQueryOptions = ({
-    uid,
-    chainId,
+	uid,
+	chainId,
 }: UseGetAttestationParams) => {
-    return {
-        queryKey: ["attestation", chainId, uid],
-        queryFn: async () =>
-            rawRequest(
-                `${getEasscanEndpoint(chainId)}/graphql`,
-                allAttestationsByQuery.toString(),
-                {
-                    where: {
-                        id: uid,
-                    },
-                },
-            ),
-    };
+	return {
+		queryKey: ["attestation", chainId, uid],
+		queryFn: async () =>
+			rawRequest(
+				`${getEasscanEndpoint(chainId)}/graphql`,
+				allAttestationsByQuery.toString(),
+				{
+					where: {
+						id: uid,
+					},
+				},
+			),
+	};
 };
 
 export const useGetAttestationWithUid = ({
-    uid,
-    chainId,
+	uid,
+	chainId,
 }: UseGetAttestationParams): UseGetAttestationsReturnType => {
-    const queryOptions = createGetAttestationWithUidQueryOptions({
-        uid,
-        chainId,
-    });
+	const queryOptions = createGetAttestationWithUidQueryOptions({
+		uid,
+		chainId,
+	});
 
-    return useQuery(queryOptions);
+	return useQuery(queryOptions);
 };

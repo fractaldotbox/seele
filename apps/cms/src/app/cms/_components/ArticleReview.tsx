@@ -1,14 +1,7 @@
 // article hash
 
 export const Web3ExplorerButton = () => {
-    return (
-        <div>
-            Button
+	return <div>Button</div>;
+};
 
-        </div>
-    )
-}
-
-export const ArticleReview = () => {
-
-}
+export const ArticleReview = () => {};

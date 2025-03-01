@@ -4,16 +4,17 @@ import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import type { TweetItem } from "./soul-builder.test";
 
-export const summarizePersonality = async (tweets: TweetItem[]) => {
+export const summarizePersonality = async (
+	tweets: TweetItem[],
+	chunkSize = 20,
+) => {
 	console.log("summarize tweets:", tweets.length);
-
-	const chunkSize = 10;
 
 	const summaries = [];
 	for (let i = 0; i < tweets.length; i += chunkSize) {
 		const chunk = tweets.slice(i, i + chunkSize);
 
-		console.log(`Processing chunk: ${i / chunkSize + 1} of size ${chunkSize}`);
+		console.log(`Processing chunk: ${i / chunkSize + 1}  size ${chunkSize}`);
 		const result = await generateText({
 			model: openai("gpt-4-turbo"),
 			prompt: `Summarize personality of the author based on the following tweets

@@ -7,6 +7,7 @@ import {
 	generateObject,
 } from "ai";
 import type z from "zod";
+import { directoryAddressAuthor } from "./agents/address-book";
 
 // align latest xstate agent versoin
 export const generateObjectWithAgent = async (
@@ -66,3 +67,8 @@ export const createEmbeddings = async (texts: string[]) => {
 //     // }
 
 // }
+
+export const ARTICLE_METAS = Array.from(Array(5).keys()).map((i) => ({
+	key: `article${i + 1}.md`,
+	directoryAddress: directoryAddressAuthor,
+}));

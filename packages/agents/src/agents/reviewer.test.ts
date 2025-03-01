@@ -1,6 +1,11 @@
 import { createAgent } from "@statelyai/agent";
 import { beforeAll, describe, it } from "vitest";
-import { agentParamsReviewer, reviewArticle } from "./reviewer";
+import { directoryAddressAuthor } from "./address-book";
+import {
+	agentParamsReviewer,
+	reviewArticle,
+	reviewArticlesAndPersist,
+} from "./reviewer";
 
 describe(
 	"ReviwerAgent",
@@ -25,6 +30,22 @@ According to BlockBeats, the U.S. Securities and Exchange Commission (SEC) has c
 			const reviewResults = await reviewArticle(agent)(article, soul);
 
 			console.log("reviewResults", reviewResults, soul);
+		});
+
+		it.only("＃reviewArticlesAndPersist", async () => {
+			const articleMetas = [
+				{
+					key: "article1.md",
+					directoryAddress: directoryAddressAuthor,
+				},
+				{
+					key: "article2.md",
+					directoryAddress: directoryAddressAuthor,
+				},
+			];
+			const results = await reviewArticlesAndPersist(articleMetas);
+
+			console.log("results", results);
 		});
 	},
 	5 * 60 * 1000,

@@ -47,10 +47,7 @@ export const persistWithDirectory = async (
 
 	const { privateKey, directoryAddress } = directoryParams;
 
-	// const key = `${namespace}/${contentKey}`;
-
-	// ignore namespace for now
-	const key = [contentKey].join("/");
+	const key = [namespace, contentKey].filter(Boolean).join("/");
 
 	console.log("upload: key", key, "content", content);
 	const dataBlob = Buffer.from(content);

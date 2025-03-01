@@ -4,18 +4,19 @@ import { describe, expect, it, vi } from "vitest";
 import { NEWS_FEED } from "../fixture";
 import { generateObjectWithAgent } from "../utils";
 import {
-	ArticlePlan,
-	NewsFeedItem,
-	agentParamsEditor,
-	createAttestation,
-	createPlannerAgentParams,
-	editArticleWithFootnote,
+  ArticlePlan,
+  NewsFeedItem,
+  agentParamsEditor,
+  createAttestation,
+  createPlannerAgentParams,
+  editArticleWithFootnote,
 } from "./editor";
+import { checkSubmissions } from "./editor.js";
 
 describe(
-	"EditorAgent",
-	() => {
-		const article = `Top-level Ethereum 
+  "EditorAgent",
+  () => {
+    const article = `Top-level Ethereum 
 		Foundation researchers responded to questions about scaling, Layer 1 revenue and security, in their latest semi-annual Reddit “AMA” (Ask Me Anything) session. The session comes amid a shift for the organization as former EF Executive Director Aya Miyaguchi announced she is "stepping up" as the organization’s president, following months of community backlash. 
 	   
 	   Perhaps most notably in the high-level discussion, the Ethereum researchers helped shed light on the upcoming Pectra upgrade, which will represent the largest technological advancement for the blockchain since the Dencun fork last year and shift to proof-of-stake before that.
@@ -57,23 +58,29 @@ describe(
 	   "Looking back, I'm pretty certain that on our own, we would have never been able to make this much progress in such a timeframe," Dietrichs said. "The parallel exploration of the design space by multiple teams has been enormously beneficial. It is easy to forget about that when focusing on the (real!) challenges this approach created (e.g. around interoperability and fractured UX)."
 	   
 	   `;
-		it("should ", async () => {
-			const agent = createAgent(agentParamsEditor);
+    it("should ", async () => {
+      const agent = createAgent(agentParamsEditor);
 
-			const results = await editArticleWithFootnote(agent)(article, [
-				"This article lacks detailed analysis on the market impact and regulatory responses to the launch of $TRUMP. Reviewed by vitalik.eth",
-				"This article is great as it mentioned the long-term potential of Ethereum. Reviewed by cz",
-			]);
+      const results = await editArticleWithFootnote(agent)(article, [
+        "This article lacks detailed analysis on the market impact and regulatory responses to the launch of $TRUMP. Reviewed by vitalik.eth",
+        "This article is great as it mentioned the long-term potential of Ethereum. Reviewed by cz",
+      ]);
 
-			expect(results.footnote).toBeDefined();
+      expect(results.footnote).toBeDefined();
 
-			console.log("rewrite results", results);
-		});
+      console.log("rewrite results", results);
+    });
 
-		it("#createAttestation", async () => {
-			const results = await createAttestation(article);
-			console.log(results);
-		});
-	},
-	60 * 1000,
+    it("#createAttestation", async () => {
+      const results = await createAttestation(article);
+      console.log(results);
+    });
+
+    // biome-ignore lint/suspicious/noFocusedTests: <explanation>
+    it.only("#checkSubmissions", async () => {
+      const results = await checkSubmissions();
+      console.log(results);
+    });
+  },
+  60 * 1000,
 );

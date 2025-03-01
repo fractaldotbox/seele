@@ -344,6 +344,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      mime-types:
+        specifier: ^2.1.35
+        version: 2.1.35
       openai:
         specifier: ^4.85.4
         version: 4.85.4(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.24.2)
@@ -353,6 +356,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@22.13.0)(typescript@5.7.3)
       unstorage:
         specifier: ^1.15.0
         version: 1.15.0(idb-keyval@6.2.1)
@@ -384,6 +390,9 @@ importers:
       '@turbo/gen':
         specifier: ^2.4.0
         version: 2.4.0(@types/node@22.13.0)(typescript@5.7.3)
+      '@types/mime-types':
+        specifier: ^2.1.4
+        version: 2.1.4
       '@types/node':
         specifier: ^22.13.0
         version: 22.13.0
@@ -3226,6 +3235,9 @@ packages:
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
+  '@types/mime-types@2.1.4':
+    resolution: {integrity: sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==}
+
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
 
@@ -3643,6 +3655,7 @@ packages:
   acorn@8.14.0:
     resolution: {integrity: sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==}
     engines: {node: '>=0.4.0'}
+    hasBin: true
 
   adm-zip@0.4.16:
     resolution: {integrity: sha512-TFi4HBKSGfIKsK5YCkKaaFG2m4PEDyViZmEwof3MTIgzimHLto6muaHVpbrljdIvIrFZzEq/p4nafOeLcYegrg==}
@@ -12413,6 +12426,8 @@ snapshots:
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
+
+  '@types/mime-types@2.1.4': {}
 
   '@types/minimatch@5.1.2': {}
 

@@ -5,6 +5,12 @@ import Header from "../components/Header.astro";
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 import "../styles/globals.css";
+import Article from "@/components/Article.astro";
+
+import { getCollection, getEntry, render } from "astro:content";
+import { truncate } from "@/lib/utils";
+import { marked } from "marked";
+const articles = await getCollection("articles");
 ---
 
 <Layout>
@@ -150,19 +156,14 @@ import "../styles/globals.css";
         <div class="lg:col-span-8">
           <article class="mb-8">
             <img src="/sample_image.jpg" alt="Featured Story" class="w-full h-96 object-cover mb-4"/>
-            <h1 class="text-3xl font-bold mb-2">Main Headline Story</h1>
-            <p class="text-gray-600 mb-4">Detailed description of the main story with key points and analysis...</p>
+            <h1 class="text-3xl font-bold mb-2">{articles?.[0].data.title}</h1>
+            <p class="text-gray-600 mb-4">{truncate(articles?.[0].data.content)}</p>
           </article>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Secondary Stories */}
-            {Array.from({ length: 4 }).map((_, i) => (
-              <article class="border-b border-gray-200 pb-4">
-                <h3 class="text-xl font-semibold mb-2">Market Update {i + 1}</h3>
-                <p class="text-gray-600 text-sm">
-                  Key market insights and analysis for today's trading session...
-                </p>
-              </article>
+            {articles.slice(1,5).map((article, i) => (
+              <Article articleKey={article.id}/>
             ))}
           </div>
         </div>
@@ -187,5 +188,4 @@ import "../styles/globals.css";
     </footer>
   </body>
 </html>
-	<Welcome />
 </Layout>

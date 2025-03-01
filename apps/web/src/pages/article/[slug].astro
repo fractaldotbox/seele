@@ -1,4 +1,6 @@
 ---
+import Header from "@/components/Header.astro";
+import Layout from "@/layouts/Layout.astro";
 import type { GetStaticPaths } from "astro";
 export const getStaticPaths = (async () => {
 	return [
@@ -10,7 +12,6 @@ export const getStaticPaths = (async () => {
 	];
 }) satisfies GetStaticPaths;
 
-import { Image } from "astro:assets";
 import { getCollection, getEntry, render } from "astro:content";
 import { marked } from "marked";
 
@@ -19,14 +20,19 @@ import { marked } from "marked";
 // const blog = await getEntry("articles", "a");
 
 const { slug } = Astro.params;
-const entry = await getEntry("articles", `community1/${slug}`);
+const entry = await getEntry("articles", `${slug}`);
 
 const content = marked.parse(entry?.data.content);
 ---
-<div>
-    content
-	<article set:html={content} />
+<Layout>
+	<body class="bg-white font-sans text-gray-900">
+		<Header />
+	<div class="container mx-auto px-4 py-8 text-base/10">
+		<article set:html={content} />
+		
+	</div>
 	
-</div>
+</body>
+</Layout>
 
 

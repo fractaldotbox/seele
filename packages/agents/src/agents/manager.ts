@@ -4,6 +4,7 @@ import {
 	getUIDsFromAttestReceipt,
 } from "@ethereum-attestation-service/eas-sdk";
 import { getEasDataByChain } from "@seele/access-gate/lib/eas/utils";
+import { generateText } from "ai";
 import { gql, rawRequest } from "graphql-request";
 import _ from "lodash";
 import type { Address } from "viem";
@@ -14,14 +15,12 @@ import {
 	loadArticles,
 } from "../adapters/utils";
 import { persistWithDirectory } from "../storage";
-import { addressEditor } from "./address-book";
+import { addressEditor, directoryAddressManager } from "./address-book";
 
 const privateKeyManager = process.env.PRIVATE_KEY_MANAGER!;
 
-const directoryAddress = process.env.DIRECTORY_ADDRESS_MANAGER!;
-
 export const agentParamsManager = {
-	name: "planner",
+	name: "manager",
 	model: openai("gpt-4-turbo"),
 	events: {},
 };
@@ -70,20 +69,48 @@ export const searchAttestationsWithParams = async (
 
 export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 	const articles = await loadArticles(articleMetas);
-
+	console.log("deploying articles", articles.length);
 	for (let i = 0; i < articles.length; i++) {
 		const article = articles[i]!;
 
-		console.log("content", article.content);
+		const titleResults = await generateText({
+			model: agentParamsManager.model,
+			prompt: `Summarize title for the article, do not include the word title in it.
+
+			<Article>
+			${article.content}
+			</Article>
+			
+
+			Example:
+			New Ethereum Research Breakthrough
+			
+                `,
+		});
+
 		await persistWithDirectory(
 			{
 				privateKey: privateKeyManager,
-				directoryAddress,
+				directoryAddress: directoryAddressManager,
 			},
 			{
 				// namespace: "article",
 				contentKey: article.key,
 				content: article.content,
+			},
+		);
+
+		await persistWithDirectory(
+			{
+				privateKey: privateKeyManager,
+				directoryAddress: directoryAddressManager,
+			},
+			{
+				// namespace: "article",
+				contentKey: article.key.replace(".md", ".json"),
+				content: JSON.stringify({
+					title: titleResults?.text,
+				}),
 			},
 		);
 	}
@@ -154,6 +181,7 @@ export const verifyAndDeploy = async (
 	attestations: Attestation[],
 	articlesMeta: ArticleMeta[],
 ) => {
+	// original author directory address
 	for (let i = 0; i < articlesMeta.length; i++) {
 		const { key, directoryAddress } = articlesMeta[i]!;
 

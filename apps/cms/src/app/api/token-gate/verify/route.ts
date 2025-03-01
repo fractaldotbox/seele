@@ -19,6 +19,10 @@ export async function POST(request: Request) {
 
     console.log("tokenGates", tokenGates);
 
+    if (tokenGates.length === 0) {
+      return NextResponse.json({ verified: true });
+    }
+
     const verifier = new TokenGateVerifier();
     const result = await verifier.verify(address, tokenGates);
 

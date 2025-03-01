@@ -12,14 +12,18 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
+import React from "react";
 import { createEthstorageArticleUrl } from "../utils";
 import { ArticleDrawer } from "./ArticleDrawer";
 
 const directoryAddress = "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8";
 
-export const ArticleList = ({ articles, directoryAddress }: { articles: any[], directoryAddress: string }) => {
+export const ArticleList = ({
+	articles,
+	directoryAddress,
+}: { articles: any[]; directoryAddress: string }) => {
 	const [articleKey, setArticleKey] = useState(undefined);
-
+	const [isReview, setIsReview] = React.useState(true);
 	return (
 		<Drawer>
 			<Table>
@@ -32,7 +36,8 @@ export const ArticleList = ({ articles, directoryAddress }: { articles: any[], d
 						<TableHead className="w-[100px]">Key</TableHead>
 						<TableHead>Status</TableHead>
 						<TableHead>Author</TableHead>
-						<TableHead className="text-right">W3Url</TableHead>
+						<TableHead className="text-right">FactCheck</TableHead>
+						<TableHead className="text-right">Reviews</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -44,12 +49,26 @@ export const ArticleList = ({ articles, directoryAddress }: { articles: any[], d
 							<TableCell className="text-right">
 								<DrawerTrigger
 									key={article.key}
+									asChild
 									onClick={() => {
+										setIsReview(false);
 										console.log("clicking", article.key);
 										setArticleKey(article.key);
 									}}
 								>
-									<Button>Inspect</Button>
+									<div className="cursor-pointer">Check Facts</div>
+								</DrawerTrigger>
+							</TableCell>
+							<TableCell className="text-right">
+								<DrawerTrigger
+									key={article.key}
+									asChild
+									onClick={() => {
+										setIsReview(true);
+										setArticleKey(article.key);
+									}}
+								>
+									<div className="cursor-pointer">Check Reviews</div>
 								</DrawerTrigger>
 							</TableCell>
 						</TableRow>
@@ -62,7 +81,7 @@ export const ArticleList = ({ articles, directoryAddress }: { articles: any[], d
                 </TableRow>
             </TableFooter> */}
 			</Table>
-			<ArticleDrawer articleKey={articleKey} />
+			<ArticleDrawer articleKey={articleKey} isReview={isReview} />
 		</Drawer>
 	);
 };

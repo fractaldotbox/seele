@@ -15,7 +15,7 @@ export const ReviewCard = ({
 	comment: string;
 }) => {
 	return (
-		<Card >
+		<Card>
 			<CardHeader>
 				<CardTitle>Review</CardTitle>
 				{/* <CardDescription>{comment}</CardDescription> */}

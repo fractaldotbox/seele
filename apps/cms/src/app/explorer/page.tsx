@@ -11,22 +11,17 @@ import { createEthstorageArticleUrl } from "../cms/utils";
 const directoryAddressManager = "0x649318865AF1A2aE6EE1C5dE9aD6cF6162e28E22";
 const directoryAddressAuthor = "0x30B00979c33F826BCF7e182545A3353aD97e1C42";
 
-const articleMetas = [1, 2, 3, 4, 5].map(
-	(key) => ({
-		key: `article${key}.md`,
-		status: "approved",
-	})
-)
+const articleMetas = [1, 2, 3, 4, 5].map((key) => ({
+	key: `article${key}.md`,
+	status: "approved",
+}));
 
-const articles = articleMetas.map(
-	(article) => ({
-		...article,
+const articles = articleMetas.map((article) => ({
+	...article,
 
-		status: "approved",
-		author: '0x30B00979c33F826BCF7e182545A3353aD97e1C42'
-
-	})
-);
+	status: "approved",
+	author: "0x30B00979c33F826BCF7e182545A3353aD97e1C42",
+}));
 
 const ExplorerPage = () => {
 	const [mounted, setMounted] = useState(false);
@@ -34,7 +29,7 @@ const ExplorerPage = () => {
 	const { address } = useAccount();
 	const chainId = useChainId();
 
-	const ensName = 'thisweekin.eth';
+	const ensName = "thisweekin.eth";
 
 	useEffect(() => {
 		setMounted(true);
@@ -60,8 +55,18 @@ const ExplorerPage = () => {
 					<div className="lg:row-span-2">
 						<div>
 							<div>w3link.io: https://thisweekin.eth.1.w3link.io/</div>
-							ENS: <a href={`https://app.ens.domains/${ensName}?tab=records`} target="_blank" rel="noreferrer"><span>{ensName}</span></a>
-							<ArticleList articles={articles} directoryAddress={directoryAddressManager} />
+							ENS:{" "}
+							<a
+								href={`https://app.ens.domains/${ensName}?tab=records`}
+								target="_blank"
+								rel="noreferrer"
+							>
+								<span>{ensName}</span>
+							</a>
+							<ArticleList
+								articles={articles}
+								directoryAddress={directoryAddressManager}
+							/>
 						</div>
 					</div>
 				</div>

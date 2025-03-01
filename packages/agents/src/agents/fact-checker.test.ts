@@ -1,3 +1,4 @@
+import { buildEthFactBank } from "@seele/data-fetch/polymarket/polymarket";
 import { createAgent } from "@statelyai/agent";
 import type { Storage } from "unstorage";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -61,6 +62,26 @@ describe(
 		});
 
 		it.only("#factcheck and persist", async () => {
+			const facts = await buildEthFactBank(300);
+			// TODO clean data
+
+			await storage.setItems(
+				facts.map((fact: any) => ({
+					key: `polymarket:${fact.id}`,
+					value: {
+						title: fact.statement,
+						content: `
+						<Statment>
+						${fact.statement}
+						</Statment>
+						<Result>
+						 ${fact.yesOrNo}
+						</Result>
+						`,
+					},
+				})),
+			);
+
 			await factCheckAndPersist(agent)(ARTICLE_METAS, storage);
 		});
 	},

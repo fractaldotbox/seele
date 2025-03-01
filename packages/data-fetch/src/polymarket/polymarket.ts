@@ -8,9 +8,11 @@ export async function buildEthFactBank(qty = 5): Promise<EthFact[]> {
 
 	// parse data and statement
 	const ethFacts = await optimisticPriceRequests.map((request): EthFact => {
-		const { ancillaryData, settlementPrice } = request;
+		const { ancillaryData, settlementPrice, id, identifier } = request;
 
 		return {
+			id,
+			// identifier,
 			statement: Buffer.from(ancillaryData.slice(2), "hex").toString("utf8"),
 			yesOrNo: settlementPrice > 0 ? "yes" : "no",
 		};

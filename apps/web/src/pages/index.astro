@@ -82,18 +82,7 @@ const tokens = Object.entries(TOKEN_ADDRESSES).map(([symbol, address]) => {
     <div class="w-full bg-black text-white py-2 overflow-hidden">
       <div class="ticker-container">
         <div class="ticker-slide flex space-x-12">
-          {tokens.map(token => (
-            <div class="flex items-center whitespace-nowrap">
-              <span class="font-medium">{token.symbol}</span>
-              <span class="ml-2">${token.price}</span>
-              <span class={`ml-2 ${Number(token.change) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {Number(token.change) >= 0 ? '▲' : '▼'} {Math.abs(Number(token.change))}%
-              </span>
-            </div>
-          ))}
-        </div>
-        <div class="ticker-slide flex space-x-12 ml-[50%]" aria-hidden="true">
-          {tokens.map(token => (
+          {[...tokens, ...tokens, ...tokens, ...tokens].map(token => (
             <div class="flex items-center whitespace-nowrap">
               <span class="font-medium">{token.symbol}</span>
               <span class="ml-2">${token.price}</span>

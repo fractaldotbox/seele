@@ -1,53 +1,56 @@
 import { createAgent } from "@statelyai/agent";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
-	agentParamsAuthor,
-	submitArticle,
-	writeAndPersist,
-	writeArticle,
-} from "./author";
+  agentParamsAuthor,
+  submitArticle,
+  writeAndPersist,
+  writeArticle,
+} from "./author.js";
 
 describe(
-	"AuthorAgent",
-	() => {
-		let storage: Storage;
-		const context = {
-			topic: "security of dApps in Ethereum",
-			editorialDirection: "Be Detailed",
-			researchContext: "$10k is loss last week",
-		};
+  "AuthorAgent",
+  () => {
+    let storage: Storage;
+    const context = {
+      topic: "security of dApps in Ethereum",
+      editorialDirection: "Be Detailed",
+      researchContext: "$10k is loss last week",
+    };
 
-		beforeAll(async () => {});
+    beforeAll(async () => {});
 
-		it("#writeArticle", async () => {
-			const agent = createAgent(agentParamsAuthor);
+    it("#writeArticle", async () => {
+      const agent = createAgent(agentParamsAuthor);
 
-			const article = await writeArticle(agent)(context);
-			console.log("article", article);
-		});
+      const article = await writeArticle(agent)(context);
+      console.log("article", article);
+    });
 
-		it("#writeArticle and persist", async () => {
-			const agent = createAgent(agentParamsAuthor);
+    it("#writeArticle and persist", async () => {
+      const agent = createAgent(agentParamsAuthor);
 
-			const contentKey = "article1.md";
+      const contentKey = "article1.md";
 
-			const results = await writeAndPersist(agent)(contentKey, context);
+      const results = await writeAndPersist(agent)(contentKey, context);
 
-			console.log("results", results);
-		});
+      console.log("results", results);
+    });
 
-		it("#submitArticle", async () => {
-			await submitArticle("article1.md");
-		});
+    // biome-ignore lint/suspicious/noFocusedTests: <explanation>
+    it.only("#submitArticle", async () => {
+      const results = await submitArticle("article1.md");
 
-		it.only("write and submmit", async () => {
-			const contentKey = "article1.md";
-			const agent = createAgent(agentParamsAuthor);
-			const url = await writeAndPersist(agent)(contentKey, context);
-			const results = await submitArticle(contentKey);
+      console.log(results);
+    });
 
-			console.log(results);
-		});
-	},
-	300 * 1000,
+    it("write and submmit", async () => {
+      const contentKey = "article1.md";
+      const agent = createAgent(agentParamsAuthor);
+      const url = await writeAndPersist(agent)(contentKey, context);
+      const results = await submitArticle(contentKey);
+
+      console.log(results);
+    });
+  },
+  300 * 1000,
 );

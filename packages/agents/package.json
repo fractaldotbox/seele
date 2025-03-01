@@ -9,6 +9,7 @@
 		"generate:component": "turbo gen react-component",
 		"check-types": "tsc --noEmit",
 		"test": "vitest",
+		"build:soul": "tsx src/scripts/souls.mts",
 		"test:zkverify": "vitest run zkverify"
 	},
 	"devDependencies": {
@@ -33,8 +34,11 @@
 		"graphql-request": "^6.1.0",
 		"lodash": "^4.17.21",
 		"openai": "^4.85.4",
+		"pg": "^8.13.3",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"tsx": "^4.19.3",
+		"typeorm": "^0.3.20",
 		"unstorage": "^1.15.0",
 		"viem": "2.23.5",
 		"vitest": "^3.0.6",

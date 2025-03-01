@@ -10,7 +10,7 @@ const getKey = (tweet: any) => {
 	return ["x", tweet?.author?.userName, tweet?.id].join(":").toLowerCase();
 };
 
-const loadTweets = async (storage: Storage) => {
+export const loadTweets = async (storage: Storage) => {
 	const fixtures = await import.meta.glob(`./fixture/twitter/*.json`);
 
 	for (const path in fixtures) {

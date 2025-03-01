@@ -1,7 +1,7 @@
 import { createAgent } from "@statelyai/agent";
 import { result } from "lodash";
 import { FineTuningJobCheckpointsPage } from "openai/resources/fine-tuning/jobs/checkpoints.mjs";
-import { describe, it } from "vitest";
+import { beforeAll, describe, it } from "vitest";
 import { waitFor } from "xstate";
 import {
 	ArticlePlan,
@@ -9,30 +9,37 @@ import {
 	createPlannerAgentParams,
 } from "./agents/editor";
 import { NEWS_FEED } from "./fixture";
-import { start } from "./orchestrate";
+import { planAndWrite, reviewAndDeploy, start } from "./orchestrate";
 import { generateObjectWithAgent } from "./utils";
 
 describe(
 	"orchestrate",
 	() => {
-		it.skip("#start", async () => {
-			const { agent, actor } = await start();
+		const soulByName: Record<string, string> = {};
 
-			await waitFor(actor, (s) => s.matches("end of world"));
+		// TODO load from directory under soul/
+		beforeAll(async () => {
+			const soulDataVitalik = await import(`./fixture/soul/vitalik.eth.json`);
+			const soulDataCz = await import(`./fixture/soul/cz_binance.json`);
+			soulByName["vitalik.eth"] = soulDataVitalik?.default;
+			soulByName["cz_binance"] = soulDataCz?.default;
 		});
+
+		// it.skip("#start", async () => {
+		// 	const { agent, actor } = await start();
+
+		// 	await waitFor(actor, (s) => s.matches("end of world"));
+		// });
 
 		it("plan and delegate author agents to write", async () => {
-			const agent = createAgent(agentParamsEditor);
-			const results = await generateObjectWithAgent(
-				agent,
-				createPlannerAgentParams(NEWS_FEED),
-			);
+			await planAndWrite();
 
-			const article = results?.articles[0];
+			// submitArticle()
+		});
 
-			console.log("article");
-			console.log(article);
+		it.only("#reviewAndDeploy", async () => {
+			await reviewAndDeploy(soulByName);
 		});
 	},
-	30 * 1000,
+	10 * 30 * 1000,
 );

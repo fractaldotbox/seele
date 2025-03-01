@@ -23,8 +23,8 @@ export const createDirectory = async (
 ) => {
 	let address = existingAddress;
 	const params = {
-		rpc: new URL(rpc),
-		ethStorageRpc: new URL(ethStorageRpc),
+		rpc,
+		ethStorageRpc,
 		privateKey,
 		address,
 	};

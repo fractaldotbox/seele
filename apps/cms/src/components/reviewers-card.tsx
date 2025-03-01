@@ -9,7 +9,7 @@ import {
 import { getSocialsFromEns } from "@seele/data-fetch/ens";
 import { Loader2, X } from "lucide-react";
 import { useState } from "react";
-import { AddItemInput } from "./add-item-input";
+import { AddItemInput } from "../components/AddItemInput";
 
 interface Reviewer {
 	ens: string;

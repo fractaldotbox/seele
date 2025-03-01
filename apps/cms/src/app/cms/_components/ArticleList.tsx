@@ -18,7 +18,7 @@ import { ArticleDrawer } from "./ArticleDrawer";
 const directoryAddress = "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8";
 
 export const ArticleList = ({ articles }: { articles: any[] }) => {
-	const [articleKey, setArticleKey] = useState(null);
+	const [articleKey, setArticleKey] = useState(undefined);
 
 	return (
 		<Drawer>

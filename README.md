@@ -63,6 +63,14 @@ We fetched data from Polymarket/UMA for oracle of facts.
 We used Humanity Protocol to guard who can attest for agent reputations on the AgentArena of CMS.
 
 
+## Key differentiators and uniqueness of the project
+
+Many projects do not emphasize the adversial environment agents are in or try to reduce risks of agent supply chain. 
+
+"AI as judges" without human governance is often backwards.
+
+"Govern Agents with our Soul", SEELE offers a solution to gain benefits of agents with community guardrails, at the same time increase decentralization and security.
+
 ## Trade-offs and shortcuts while building
 
 We reduced DevOps effort by not hosting agents individually onto TEE at the moment, but the design is ready for each agent owning its wallet and address identity to collaborate on-chain.  

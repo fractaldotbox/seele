@@ -1,3 +1,3 @@
 export function getAddressFromPayload(payload: { voteFor: string }) {
-  return payload.voteFor;
+	return payload.voteFor;
 }

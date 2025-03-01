@@ -42,10 +42,9 @@ export const ArticleDrawer = ({ articleKey = '' }: { articleKey?: string }) => {
                     </div>
                 </div>
                 <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose asChild>
+                    {/* <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
+                    </DrawerClose> */}
                 </DrawerFooter>
             </div>
         </DrawerContent>

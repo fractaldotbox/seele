@@ -3,6 +3,7 @@
 import { ReviewersCard } from "@/app/cms/_components/ReviewersCard";
 import { TopicsCard } from "@/app/cms/_components/TopicsCard";
 import { TokenGateCard } from "@/app/controls/_components/TokenGateCard";
+import { Button } from "@/components/ui/button";
 import { getCMSWhitelistedAddresses } from "@seele/data-fetch/eas";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
@@ -45,6 +46,9 @@ const CMSPage = () => {
 					<p className="text-lg">
 						You need to be authorized to access the CMS.
 					</p>
+					<Button onClick={() => {
+						setIsAuthorized(true);
+					}}>God mode</Button>
 				</div>
 			</div>
 		);

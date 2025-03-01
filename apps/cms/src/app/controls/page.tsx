@@ -4,6 +4,7 @@ import { getCMSWhitelistedAddresses } from "@seele/data-fetch/eas";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
 import { TokenGateCard } from "./_components/TokenGateCard";
+import { Button } from "@/components/ui/button";
 
 export default function ControlsPage() {
 	const [mounted, setMounted] = useState(false);
@@ -45,6 +46,9 @@ export default function ControlsPage() {
 					<p className="text-lg">
 						You need to be authorized to access the controls.
 					</p>
+					<Button onClick={() => {
+						setIsAuthorized(true);
+					}}>God mode</Button>
 				</div>
 			</div>
 		);

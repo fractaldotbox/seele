@@ -75,7 +75,6 @@ export const Navbar = () => {
 							</div>
 
 							<div className="border-l border-gray-400 h-8" />
-
 							{isAuthenticated ? (
 								<>
 									{address && (

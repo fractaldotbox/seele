@@ -23,13 +23,14 @@ export default function Home() {
 				<div className="text-center mb-12">
 					<h1 className="text-5xl font-bold mb-4 text-foreground">SEELE</h1>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						Giving DAOs a soul through AI-powered content generation and
-						representation
+						Orchestrate agents with our soul.
+						<br />
+						CMS for agents, governed by community.
 					</p>
 				</div>
 
 				{/* Feature Highlights */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-12">
+				{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-12">
 					<Card>
 						<CardHeader>
 							<h3 className="text-xl font-semibold">AI Voice</h3>
@@ -63,12 +64,12 @@ export default function Home() {
 							</p>
 						</CardContent>
 					</Card>
-				</div>
+				</div> */}
 
 				{/* CTA Section */}
-				<div className="text-center mt-12">
+				{/* <div className="text-center mt-12">
 					<Button size="lg">Start Empowering Your DAO</Button>
-				</div>
+				</div> */}
 			</main>
 		</div>
 	);

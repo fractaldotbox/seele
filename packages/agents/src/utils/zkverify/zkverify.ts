@@ -1,6 +1,6 @@
 import { ProofType, zkVerifySession } from "zkverifyjs";
 
-const SEED_PHRASE = process.env.ZKVERIFY_WALLET_SEED_PHRASE;
+export const SEED_PHRASE = process.env.ZKVERIFY_WALLET_SEED_PHRASE;
 
 export const addPrefix = (value: string) => `0x${value}`;
 

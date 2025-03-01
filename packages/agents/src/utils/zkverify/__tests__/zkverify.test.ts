@@ -2,6 +2,7 @@ import { describe, it } from "vitest";
 import {
   addPrefix,
   createProofOfSqlExt,
+  SEED_PHRASE,
   startSesssion,
   verifyProofOfSql,
 } from "../zkverify";
@@ -20,20 +21,15 @@ describe("zkverify", () => {
     console.log("Current directory:", __dirname);
     console.log("Proofs directory:", PROOFS_DIR);
 
-    const vk = readFileSync(join(PROOFS_DIR, "VALID_PUBS_MAX_NU_4.bin"), "hex");
-    const proof = readFileSync(
-      join(PROOFS_DIR, "VALID_PROOF_MAX_NU_4.bin"),
-      "hex",
-    );
-    const publicSignals = readFileSync(
-      join(PROOFS_DIR, "VALID_PUBS_MAX_NU_4.bin"),
-      "hex",
-    );
+    // Read the proof files
+    const vk = `0x${readFileSync(join(PROOFS_DIR, "VALID_VK_MAX_NU_4.bin"), "hex")}`;
+    const proof = `0x${readFileSync(join(PROOFS_DIR, "VALID_PROOF_MAX_NU_4.bin"), "hex")}`;
+    const publicSignals = `0x${readFileSync(join(PROOFS_DIR, "VALID_PUBS_MAX_NU_4.bin"), "hex")}`;
 
     const proofObj = {
-      vk: addPrefix(vk),
-      proof: addPrefix(proof),
-      publicSignals: addPrefix(publicSignals),
+      vk,
+      proof,
+      publicSignals,
     };
 
     // Save proof data as JSON for debug
@@ -42,11 +38,7 @@ describe("zkverify", () => {
     fs.writeFileSync(outputPath, proofJson);
     console.log("Proof data saved to:", outputPath);
 
-    const result = await verifyProofOfSql(session, {
-      vk: proofObj.vk,
-      proof: proofObj.proof,
-      publicSignals: proofObj.publicSignals,
-    });
+    const result = await verifyProofOfSql(session, proofObj);
 
     console.log("Result:", result);
   }, 1_000_000);
@@ -56,7 +48,7 @@ describe("zkverify", () => {
     const session = await zkVerifySession
       .start()
       .Testnet() // Preconfigured network selection
-      .withAccount(SEED_PHRASE); // Full session with a single active account
+      .withAccount(SEED_PHRASE as string); // Full session with a single active account
 
     console.log("Current directory:", __dirname);
     console.log("Proofs directory:", PROOFS_DIR);

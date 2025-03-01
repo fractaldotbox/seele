@@ -69,6 +69,24 @@ export const TokenGateCard = ({
     requireHumanCredentials,
   );
 
+  // Fetch initial human verification state
+  useEffect(() => {
+    const fetchHumanityGateState = async () => {
+      try {
+        const response = await fetch("/api/humanity-gate");
+        if (!response.ok) {
+          throw new Error("Failed to fetch humanity gate state");
+        }
+        const data = await response.json();
+        setIsHumanRequired(data.isEnabled);
+      } catch (error) {
+        console.error("[fetchHumanityGateState] Error:", error);
+      }
+    };
+
+    fetchHumanityGateState();
+  }, []);
+
   useEffect(() => {
     const fetchWhitelist = async () => {
       setIsWhitelistLoading(true);
@@ -195,10 +213,26 @@ export const TokenGateCard = ({
     }
   };
 
-  const handleHumanCredentialsChange = (checked: boolean) => {
-    setIsHumanRequired(checked);
-    if (onHumanCredentialsChange) {
-      onHumanCredentialsChange(checked);
+  const handleHumanCredentialsChange = async (checked: boolean) => {
+    try {
+      const response = await fetch("/api/humanity-gate", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update humanity gate state");
+      }
+
+      const data = await response.json();
+      setIsHumanRequired(data.isEnabled);
+
+      if (onHumanCredentialsChange) {
+        onHumanCredentialsChange(data.isEnabled);
+      }
+    } catch (error) {
+      console.error("[handleHumanCredentialsChange] Error:", error);
+      // Revert the checkbox state on error
+      setIsHumanRequired(!checked);
     }
   };
 

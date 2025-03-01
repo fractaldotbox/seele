@@ -11,12 +11,15 @@
 		"test": "vitest"
 	},
 	"devDependencies": {
-		"@seele/typescript-config": "workspace:*",
+		"@ar.io/sdk": "^3.8.2",
+		"@ardrive/turbo-sdk": "^1.23.0",
 		"@seele/access-gate": "workspace:*",
+		"@seele/typescript-config": "workspace:*",
 		"@turbo/gen": "^2.4.0",
 		"@types/node": "^22.13.0",
 		"@types/react": "19.0.8",
 		"@types/react-dom": "19.0.3",
+		"arweave": "^1.15.5",
 		"eslint": "^9.20.0",
 		"typescript": "5.7.3"
 	},
@@ -26,10 +29,10 @@
 		"@seele/data-fetch": "workspace:*",
 		"@statelyai/agent": "^1.1.6",
 		"@tavily/core": "^0.3.1",
-		"graphql-request": "^6.1.0",
 		"@types/lodash": "^4.17.15",
 		"ai": "^4.1.46",
 		"ethers": "v6.13.5",
+		"graphql-request": "^6.1.0",
 		"lodash": "^4.17.21",
 		"openai": "^4.85.4",
 		"react": "^19.0.0",

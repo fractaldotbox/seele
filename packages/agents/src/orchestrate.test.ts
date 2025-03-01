@@ -17,7 +17,6 @@ describe(
 	() => {
 		const soulByName: Record<string, string> = {};
 
-		// TODO load from directory under soul/
 		beforeAll(async () => {
 			const soulDataVitalik = await import(`./fixture/soul/vitalik.eth.json`);
 			const soulDataCz = await import(`./fixture/soul/cz_binance.json`);
@@ -34,7 +33,7 @@ describe(
 		it("plan and delegate author agents to write", async () => {
 			await planAndWrite();
 
-			// submitArticle()
+			// await submitArticle()
 		});
 
 		it.only("#reviewAndDeploy", async () => {

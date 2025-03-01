@@ -1,0 +1,16 @@
+---
+import { getEntry } from "astro:content";
+
+const articleKey = Astro.props.articleKey;
+console.log("abc", Astro.props.articleKey);
+const article = await getEntry("articles", articleKey);
+console.log("article", article);
+---
+<article class="border-b border-gray-200 pb-4">
+    <h3 class="text-xl font-semibold mb-2">Market Update</h3>
+    <p class="text-gray-600 text-sm">
+      {article?.data.id}
+
+      {article?.data.content}
+    </p>
+  </article>

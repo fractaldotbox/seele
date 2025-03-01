@@ -24,7 +24,6 @@ const entry = await getEntry("articles", `community1/${slug}`);
 const content = marked.parse(entry?.data.content);
 ---
 <div>
-    content
 	<article set:html={content} />
 	
 </div>

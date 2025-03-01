@@ -23,3 +23,7 @@ export const groupBy = <K extends string, V>(
 		return r;
 	}, {}) as Record<K, V>;
 };
+
+export const truncate = (str: string, n = 500) => {
+	return str.length > n ? str.substr(0, n - 1) + "..." : str;
+};

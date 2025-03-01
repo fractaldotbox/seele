@@ -29,6 +29,7 @@
 		"@ethereum-attestation-service/eas-sdk": "^2.7.0",
 		"dotenv": "^16.4.7",
 		"graphql": "^16.8.1",
-		"graphql-request": "^6.1.0"
+		"graphql-request": "^6.1.0",
+		"viem": "^2.23.5"
 	}
 }

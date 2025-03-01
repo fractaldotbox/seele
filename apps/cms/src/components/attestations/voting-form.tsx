@@ -100,7 +100,7 @@ export const VotingForm = ({
 												onClick={() => {
 													field.onChange(
 														// TODO: change address to agent address
-														"0x6e3eAffd3643dB8FfBE5973A4Ccf64F2F9AA9cfd",
+														"0x30B00979c33F826BCF7e182545A3353aD97e1C42",
 													);
 													form.handleSubmit(onSubmit)();
 												}}

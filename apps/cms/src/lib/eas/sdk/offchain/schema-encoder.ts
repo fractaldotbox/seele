@@ -1,3 +1,4 @@
+import { ZERO_ADDRESS } from "@/lib/constants";
 import {
 	AbiCoder,
 	FunctionFragment,
@@ -5,7 +6,6 @@ import {
 	isBytesLike,
 } from "ethers";
 import { CID, type MultihashDigest } from "multiformats";
-import { ZERO_ADDRESS } from "#lib/constants";
 
 export type SchemaValue =
 	| string
@@ -208,7 +208,8 @@ export class SchemaEncoder {
 			this.decodeData(data);
 
 			return true;
-		} catch (e) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
 			return false;
 		}
 	}
@@ -236,7 +237,8 @@ export class SchemaEncoder {
 			bytes: Uint8Array.from([18, 32, ...digest]),
 		};
 
-		const dCID = CID.createV0(dec);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const dCID = CID.createV0(dec as any);
 		return dCID.toString();
 	}
 
@@ -272,7 +274,8 @@ export class SchemaEncoder {
 		try {
 			AbiCoder.defaultAbiCoder().encode(["bytes32"], [value]);
 			return value;
-		} catch (e) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
 			return encodeBytes32String(value);
 		}
 	}

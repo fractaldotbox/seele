@@ -11,7 +11,7 @@ async function _searchAttestationsByParams(
 	const { easAttestedByMemberSchema, gqlBaseUrl } =
 		getEasDataByChain(chainName);
 
-	const variables = {
+	const variables1 = {
 		where: {
 			revoked: {
 				equals: false,
@@ -36,12 +36,74 @@ async function _searchAttestationsByParams(
 		},
 	};
 
-	try {
-		const { data } = await rawRequest<{
-			attestations: Attestation[];
-		}>(gqlBaseUrl, GetAttestationByParams, variables);
+	const variables2 = {
+		where: {
+			revoked: {
+				equals: false,
+			},
+			decodedDataJson: {
+				equals: JSON.stringify([
+					{
+						name: "scope",
+						type: "string[]",
+						signature: "string[] scope",
+						value: {
+							name: "scope",
+							type: "string[]",
+							value: [Permissions.ProvideInfo, Permissions.Vote],
+						},
+					},
+				]),
+			},
+			schemaId: {
+				equals: easAttestedByMemberSchema,
+			},
+		},
+	};
 
-		return data.attestations;
+	const variables3 = {
+		where: {
+			revoked: {
+				equals: false,
+			},
+			decodedDataJson: {
+				equals: JSON.stringify([
+					{
+						name: "scope",
+						type: "string[]",
+						signature: "string[] scope",
+						value: {
+							name: "scope",
+							type: "string[]",
+							value: [Permissions.Vote, Permissions.ProvideInfo],
+						},
+					},
+				]),
+			},
+			schemaId: {
+				equals: easAttestedByMemberSchema,
+			},
+		},
+	};
+
+	try {
+		const { data: data1 } = await rawRequest<{
+			attestations: Attestation[];
+		}>(gqlBaseUrl, GetAttestationByParams, variables1);
+
+		const { data: data2 } = await rawRequest<{
+			attestations: Attestation[];
+		}>(gqlBaseUrl, GetAttestationByParams, variables2);
+
+		const { data: data3 } = await rawRequest<{
+			attestations: Attestation[];
+		}>(gqlBaseUrl, GetAttestationByParams, variables3);
+
+		return [
+			...data1.attestations,
+			...data2.attestations,
+			...data3.attestations,
+		];
 	} catch (error) {
 		console.error("GraphQL query error:", error);
 		return [];

@@ -19,7 +19,11 @@ const articles = defineCollection({
 
 		const results = await Promise.all(
 			keys
-				.map((key) => getUrl(key))
+				.map((key) => {
+					const url = getUrl(key);
+					console.log("url", url);
+					return url;
+				})
 				.map((url) => fetch(url).then((res) => res.text())),
 		);
 

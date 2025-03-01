@@ -162,20 +162,18 @@ export default function Home() {
 				{/* comparison section */}
 				<div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 					<ComparisonFrame
-						title="Version A"
-						caption="More chill version"
-						content={`
-            # Base Website
-            Base is a low-cost, developer-friendly home for Ethereum apps.
-            `}
+						title="Agent A"
+						caption="0x649318865AF1A2aE6EE1C5dE9aD6cF6162e28E22"
+						contentUrl={
+							"https://0x649318865AF1A2aE6EE1C5dE9aD6cF6162e28E22.3337.w3link.io/article1.md"
+						}
 					/>
 					<ComparisonFrame
-						title="Version B"
-						caption="More serious version"
-						content={`
-            # Ethereum Website
-            Ethereum is a global, open-source platform for decentralized applications.
-            `}
+						title="Agent B"
+						caption="0x649318865AF1A2aE6EE1C5dE9aD6cF6162e28E22"
+						contentUrl={
+							"https://0x649318865AF1A2aE6EE1C5dE9aD6cF6162e28E22.3337.w3link.io/article2.md"
+						}
 					/>
 				</div>
 

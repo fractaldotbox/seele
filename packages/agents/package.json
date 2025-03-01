@@ -10,7 +10,8 @@
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit",
     "test": "vitest",
-    "deploy:arweave": "ts-node src/utils/arweave/deploy.ts"
+    "deploy:arweave": "ts-node src/utils/arweave/deploy.ts",
+    "arkb": "arkb"
   },
   "devDependencies": {
     "@ar.io/sdk": "^3.8.2",
@@ -22,6 +23,7 @@
     "@types/node": "^22.13.0",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
+    "arkb": "^1.1.61",
     "arweave": "^1.15.5",
     "eslint": "^9.20.0",
     "typescript": "5.7.3"

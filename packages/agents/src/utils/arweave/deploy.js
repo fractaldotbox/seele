@@ -13,8 +13,11 @@ function getAllFiles(dir, allFiles = []) {
   return allFiles;
 }
 
+const file = fs.readFileSync("key.json", { encoding: "utf-8" });
+
+const privateKey = JSON.parse(file);
 const turbo = TurboSdk.TurboFactory.authenticated({
-  privateKey: JSON.parse(fs.readFileSync("key.json", { encoding: "utf-8" })),
+  privateKey,
 });
 const uploadResults = [];
 for (const filePath of getAllFiles("dist")) {
@@ -55,4 +58,4 @@ const result = await turbo.uploadFile({
   },
 });
 fs.writeFileSync("deployment-id", result.id);
-console.log(`https://arweave.developerdao.com/${result.id}`);
+console.log(`https://arweave.net/${result.id}`);

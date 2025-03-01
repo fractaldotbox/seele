@@ -84,10 +84,10 @@ export const TokenPriceChartWithFeed = ({
 	) satisfies ChartConfig;
 
 	return (
-		<div className="w-full h-full]">
+		<div className="w-full h-[200px]">
 			<ChartContainer
 				config={chartConfig}
-				style={{ height: "300px", width: "300px" }}
+				style={{ height: "200px", width: "300px" }}
 			>
 				<LineChart accessibilityLayer data={chartData}>
 					<CartesianGrid vertical={false} />

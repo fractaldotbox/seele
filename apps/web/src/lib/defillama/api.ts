@@ -67,7 +67,7 @@ export async function getChart(
 
 	const response = await ky(
 		`${ENDPOINT_COINS}/chart/${tokenIds}?${new URLSearchParams({
-			start: "1664364537",
+			start: "1740125794",
 			span: "10",
 			// end: "1736827311",
 			// searchWidth: "600",

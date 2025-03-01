@@ -15,10 +15,6 @@ export const getStaticPaths = (async () => {
 import { getCollection, getEntry, render } from "astro:content";
 import { marked } from "marked";
 
-// const articles = await getCollection("articles");
-// console.log("article", articles?.[0].id);
-// const blog = await getEntry("articles", "a");
-
 const { slug } = Astro.params;
 const article = await getEntry("articles", `${slug}`);
 
@@ -28,7 +24,7 @@ const content = marked.parse(article?.data.content);
 	<body class="bg-white font-sans text-gray-900">
 		<Header />
 	<div class="container mx-auto px-4 py-8 text-base/10">
-		<img src={"data:image/png;base64,"+article?.data?.image} alt={article?.data.title} class="w-full h-96 object-cover rounded-lg" />
+		<!-- <img src={"data:image/png;base64,"+article?.data?.image} alt={article?.data.title} class="w-full h-96 object-cover rounded-lg" /> -->
 		<article set:html={content} />
 		
 	</div>

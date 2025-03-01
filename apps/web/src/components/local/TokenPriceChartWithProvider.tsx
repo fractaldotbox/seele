@@ -15,10 +15,10 @@ export const TokenPriceChartWithProvider = () => {
 							chainId: 1,
 							address: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
 						},
-						{
-							chainId: 1,
-							address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-						},
+						// {
+						// 	chainId: 1,
+						// 	address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+						// },
 					]}
 				/>
 			</QueryClientProvider>

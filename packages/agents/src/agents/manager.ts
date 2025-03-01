@@ -4,7 +4,7 @@ import {
 	getUIDsFromAttestReceipt,
 } from "@ethereum-attestation-service/eas-sdk";
 import { getEasDataByChain } from "@seele/access-gate/lib/eas/utils";
-import { generateText } from "ai";
+import { experimental_generateImage as generateImage, generateText } from "ai";
 import { gql, rawRequest } from "graphql-request";
 import _ from "lodash";
 import type { Address } from "viem";
@@ -73,6 +73,8 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 	for (let i = 0; i < articles.length; i++) {
 		const article = articles[i]!;
 
+		let imageResults;
+
 		const titleResults = await generateText({
 			model: agentParamsManager.model,
 			prompt: `Summarize title for the article, do not include the word title in it.
@@ -87,6 +89,18 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 			
                 `,
 		});
+
+		if (i === 0) {
+			imageResults = await generateImage({
+				model: openai.image("dall-e-3"),
+				prompt: `
+				No Text, No Caption.
+				News cover image for this title:
+				${titleResults?.text}
+				`,
+				// size: '512x512'
+			});
+		}
 
 		await persistWithDirectory(
 			{
@@ -110,9 +124,24 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 				contentKey: article.key.replace(".md", ".json"),
 				content: JSON.stringify({
 					title: titleResults?.text,
+					// image: imageResults?.image?.base64,
 				}),
 			},
 		);
+
+		if (imageResults) {
+			await persistWithDirectory(
+				{
+					privateKey: privateKeyManager,
+					directoryAddress: directoryAddressManager,
+				},
+				{
+					// namespace: "article",
+					contentKey: article.key.replace(".md", ".png"),
+					content: imageResults?.image?.uint8Array,
+				},
+			);
+		}
 	}
 };
 

@@ -38,6 +38,7 @@ const articles = defineCollection({
 			content,
 			id: keys[i],
 			title: titleResults[i]?.title,
+			imgUrl: getUrl(keys[i]).replace(".md", ".png"),
 		}));
 	},
 });

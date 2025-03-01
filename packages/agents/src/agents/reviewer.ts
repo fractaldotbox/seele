@@ -52,26 +52,26 @@ export const loadAgentReputaitons = () => {
 // use directory of editor
 export const reviewArticlesAndPersist =
 	(agent: Agent<any, any>) =>
-	async (articleMetas: ArticleMeta[], soul: any) => {
-		const articles = await loadArticles(articleMetas);
+		async (articleMetas: ArticleMeta[], soul: any) => {
+			const articles = await loadArticles(articleMetas);
 
-		return await Promise.all(
-			articles.map(async (article, index) => {
-				const key = article.key;
-				console.log("review with:", soul.name, key);
-				const reviewed = await reviewArticle(agent)(article.content, soul);
-				console.log("reviewed", reviewed);
-				await persistWithDirectory(
-					{
-						privateKey: privateKeyEditor,
-						directoryAddress,
-					},
-					{
-						namespace: `review-${soul.name}`,
-						contentKey: article.key,
-						content: reviewed,
-					},
-				);
-			}),
-		);
-	};
+			return await Promise.all(
+				articles.map(async (article, index) => {
+					const key = article.key;
+					console.log("review with:", soul.name, key);
+					const reviewed = await reviewArticle(agent)(article.content, soul);
+					console.log("reviewed", reviewed);
+					await persistWithDirectory(
+						{
+							privateKey: privateKeyEditor,
+							directoryAddress,
+						},
+						{
+							namespace: `review-${soul.name.replace('.', '-')}`,
+							contentKey: article.key,
+							content: reviewed,
+						},
+					);
+				}),
+			);
+		};

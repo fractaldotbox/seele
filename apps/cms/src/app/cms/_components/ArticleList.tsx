@@ -17,7 +17,7 @@ import { ArticleDrawer } from "./ArticleDrawer";
 
 const directoryAddress = "0x73b6443ff19e7ea934ae8e4b0ddcf3d899580be8";
 
-export const ArticleList = ({ articles }: { articles: any[] }) => {
+export const ArticleList = ({ articles, directoryAddress }: { articles: any[], directoryAddress: string }) => {
 	const [articleKey, setArticleKey] = useState(undefined);
 
 	return (
@@ -25,7 +25,7 @@ export const ArticleList = ({ articles }: { articles: any[] }) => {
 			<Table>
 				<TableCaption>
 					<div>Articles of Site</div>
-					<div>Directory Address: 0xs</div>
+					<div>Directory Address: {directoryAddress}</div>
 				</TableCaption>
 				<TableHeader>
 					<TableRow>

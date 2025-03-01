@@ -7,14 +7,17 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 
-export const ReviewCard = () => {
-	const reviewer = "vitalik.eth";
-
-	const comment = `This is a great article!`;
+export const ReviewCard = ({
+	reviewer,
+	comment,
+}: {
+	reviewer?: string;
+	comment: string;
+}) => {
 	return (
-		<Card>
+		<Card >
 			<CardHeader>
-				<CardTitle>Review by {reviewer}</CardTitle>
+				<CardTitle>Review</CardTitle>
 				{/* <CardDescription>{comment}</CardDescription> */}
 			</CardHeader>
 			<CardContent>

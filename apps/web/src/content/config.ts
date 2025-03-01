@@ -23,12 +23,21 @@ const articles = defineCollection({
 				.map((url) => fetch(url).then((res) => res.text())),
 		);
 
+		const titleResults = await Promise.all(
+			keys
+				.map((key) => getUrl(key.replace(".md", ".json")))
+				.map((url) => fetch(url).then((res) => res.json().catch((err) => {}))),
+		);
+
 		console.log("results", results);
+
+		console.log("titleResults", titleResults);
 
 		// https://docs.astro.build/en/guides/markdown-content/
 		return results.map((content, i) => ({
 			content,
 			id: keys[i],
+			title: titleResults[i]?.title,
 		}));
 	},
 });

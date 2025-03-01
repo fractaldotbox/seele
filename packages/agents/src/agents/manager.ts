@@ -4,7 +4,7 @@ import {
 	getUIDsFromAttestReceipt,
 } from "@ethereum-attestation-service/eas-sdk";
 import { getEasDataByChain } from "@seele/access-gate/lib/eas/utils";
-import { generateText } from "ai";
+import { generateText, experimental_generateImage as generateImage } from "ai";
 import { gql, rawRequest } from "graphql-request";
 import _ from "lodash";
 import type { Address } from "viem";
@@ -88,6 +88,16 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
                 `,
 		});
 
+		const { image } = await generateImage({
+			model: openai.image('dall-e-2'),
+			prompt: `
+			News cover image for this title:
+			${titleResults?.text}
+			`,
+			size: '512x512'
+			// size: '1792x1024',
+		});
+
 		await persistWithDirectory(
 			{
 				privateKey: privateKeyManager,
@@ -110,9 +120,12 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 				contentKey: article.key.replace(".md", ".json"),
 				content: JSON.stringify({
 					title: titleResults?.text,
+					image: image.base64,
 				}),
 			},
 		);
+
+
 	}
 };
 
@@ -214,4 +227,4 @@ export const verifyAndDeploy = async (
 	await deployArticles(articlesMeta);
 };
 
-export const validateProof = () => {};
+export const validateProof = () => { };

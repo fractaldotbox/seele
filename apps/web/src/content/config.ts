@@ -26,7 +26,7 @@ const articles = defineCollection({
 		const titleResults = await Promise.all(
 			keys
 				.map((key) => getUrl(key.replace(".md", ".json")))
-				.map((url) => fetch(url).then((res) => res.json().catch((err) => {}))),
+				.map((url) => fetch(url).then((res) => res.json().catch((err) => { }))),
 		);
 
 		console.log("results", results);
@@ -38,6 +38,7 @@ const articles = defineCollection({
 			content,
 			id: keys[i],
 			title: titleResults[i]?.title,
+			image: titleResults[i]?.image,
 		}));
 	},
 });

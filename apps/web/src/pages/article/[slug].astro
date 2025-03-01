@@ -20,14 +20,15 @@ import { marked } from "marked";
 // const blog = await getEntry("articles", "a");
 
 const { slug } = Astro.params;
-const entry = await getEntry("articles", `${slug}`);
+const article = await getEntry("articles", `${slug}`);
 
-const content = marked.parse(entry?.data.content);
+const content = marked.parse(article?.data.content);
 ---
 <Layout>
 	<body class="bg-white font-sans text-gray-900">
 		<Header />
 	<div class="container mx-auto px-4 py-8 text-base/10">
+		<img src={"data:image/png;base64,"+article?.data?.image} alt={article?.data.title} class="w-full h-96 object-cover rounded-lg" />
 		<article set:html={content} />
 		
 	</div>

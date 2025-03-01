@@ -40,24 +40,21 @@ export const persistWithDirectory = async (
 	data: {
 		namespace?: string;
 		contentKey: string;
-		content: string;
+		content: string | Uint8Array;
 	},
 ) => {
 	const { namespace, contentKey, content } = data;
 
 	const { privateKey, directoryAddress } = directoryParams;
 
-	// const key = `${namespace}/${contentKey}`;
-
-	// ignore namespace for now
-	const key = [contentKey].join("/");
+	const key = [namespace, contentKey].filter(Boolean).join("/");
 
 	console.log("upload: key", key, "content", content);
-	const dataBlob = Buffer.from(content);
+	// const dataBlob = Buffer.from(content);
 
 	const request = {
 		key,
-		content: Buffer.from(content),
+		content: typeof content === "string" ? Buffer.from(content) : content,
 		type: FileType.Blob,
 	};
 

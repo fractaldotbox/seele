@@ -1,84 +1,82 @@
-# Turborepo starter
+# SEELE
 
-This Turborepo starter is maintained by the Turborepo core team.
+## Orchestrate agents with our SOUL
 
-## Using this example
+SEELE is a CMS to build Autonomous website owend by agents, governed by community
 
-Run the following command:
 
-```sh
-npx create-turbo@latest
-```
+## The problem it solves
 
-## What's inside?
+Agents are powerful than ever. We could empower agents to trade on Defi, but that comes at risk of agents trading on fake news, or compromised by various forms of data posioning. Oracles today are mostly limited to quantiative data (i.e. prices), and we yet to see well integrated solutions on "info-defense".
 
-This Turborepo includes the following packages/apps:
+We also see dApps as the weakest link of security, often lack of decentralization. Recent hacks at Bybit illustrated the risk of relying on trusted party for website infrastructure (CDN/DNS/JS).  
 
-### Apps and Packages
+There is a new possibility for trustless website ownership via agents, meanwhile how could we govern that as a community?
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@seele/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@seele/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@seele/typescript-config`: `tsconfig.json`s used throughout the monorepo
+SEELE is a CMS for community to orchestrate agents to build autonomous, decntralized websites.
+Base on swarm of agents, AI will curate, write, review news. It incorporates polymarket for fact-checking, and review articles with Agents impersonating personality of community leaders. Agents is then able to  deploy a censorships resistantance, unstoppable website autonomously. Output and communications messages of are written on-chain for transparency and interpretability. 
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Community member is able to guide the agents by selecting topics of interest and training data of AI reviewers (e.g. with vitalik's twitter), and attest content they prefer on AgentArena, similar to lmarena.
 
-### Utilities
 
-This Turborepo has some additional tools already setup for you:
+## User Interaction and Data Flow
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### User Interaction
 
-### Build
 
-To build all apps and packages, run the following command:
+At CMS, Community member is able to setup topics of interested and community leadership that reviewer agents should impersonate.  
 
-```
-cd my-turborepo
-pnpm build
-```
+At AgentArena, user can attest (with EAS) agent they preferred by comparing the output content. 
 
-### Develop
+At Explorer, user is able to analyze the information supplychain of the website, such as Reviewer agents's reviews, Fact Checker Agent's analysis etc.
 
-To develop all apps and packages, run the following command:
+User can revisit the final website via web3:// protocol, which guarantee the censorship resistance and verifiability. 
 
-```
-cd my-turborepo
-pnpm dev
-```
 
-### Remote Caching
+## The project architecture and development process
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+In the architecture a swarm of agents is employed, inspired by Chain of Agent (CoA) of Google which improves the interpreability. 
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+At our demo of autonomous news agency, 
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+With a "Don't trust, verify" approach, any agent or human is able to submit content by sending a transaction to the Editor Agent.
 
-```
-cd my-turborepo
-npx turbo login
-```
+Editor will decide on article inclusion base on
+1. Reviewer council agents' review
+2. FactCheck Agent's review base on Polymarket
+3. Agent Reputation Score (via EAS on Agent Arena)
+4. Proofs attached via zkVerify
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+then attest the article with the content id on EAS
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Manager Agent will only incldue articles attested on EAS and deploy by updating content on EthStorage.
 
-```
-npx turbo link
-```
+For the frontend of final website, we applied islands architecture where 90% of the site is static, and dynamic parts load from on-chain blob via ETHstorage. This ensure censorship resistance and security.
 
-## Useful Links
 
-Learn more about the power of Turborepo:
+## Product Integrations
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+We used EAS (Ethereum Attestation Service) for Editor to attest article, for user to attest Agent they prefer
+
+We fetched data from Polymarket/UMA for oracle of facts.  
+
+We used Humanity Protocol to guard who can attest for agent reputations on the AgentArena of CMS.
+
+
+## Key differentiators and uniqueness of the project
+
+Many projects do not emphasize the adversial environment agents are in or try to reduce risks of agent supply chain. 
+
+"AI as judges" without human governance is often backwards.
+
+"Govern Agents with our Soul", SEELE offers a solution to gain benefits of agents with community guardrails, at the same time increase decentralization and security.
+
+## Trade-offs and shortcuts while building
+
+We reduced DevOps effort by not hosting agents individually onto TEE at the moment, but the design is ready for each agent owning its wallet and address identity to collaborate on-chain.  
+
+
+
+We created a Agent Evaluation framework by empowering community to attest for agent they prefer on AgentArena and use Agent reviewers to review agent output, with data from polymarket UAM and data sources fetched with Tavily 
+
+We built a decentralized CMS with agent communications and output stored onto Ethereum blobs via ETHStorage, and generate the final autonomous, unstoppable, censosrship resistant website hosted on Ethstorage supporting web3:// protocol 

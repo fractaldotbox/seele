@@ -11,18 +11,32 @@ import {
 	createPlannerAgentParams,
 	planNewsDirection,
 } from "./agents/editor";
-import { initStorage } from "./storage";
+import { initStorage, persistWithDirectory } from "./storage";
 
 import { generateObject } from "ai";
-import { writeArticle } from "./agents/author";
-import { factCheckWithRAG } from "./agents/fact-checker";
+import { directoryAddressAuthor } from "./agents/address-book";
+import {
+	agentParamsAuthor,
+	writeAndPersist,
+	writeArticle,
+} from "./agents/author";
+import {
+	agentParamsFactChecker,
+	factCheckAndPersist,
+	factCheckWithRAG,
+} from "./agents/fact-checker";
+import { agentParamsManager } from "./agents/manager";
 import {
 	type ResearchResult,
 	agentParamsResearcher,
 	researchWithWeb,
 } from "./agents/researcher";
+import {
+	agentParamsReviewer,
+	reviewArticlesAndPersist,
+} from "./agents/reviewer";
 import { newsAgencyMachine } from "./news-state";
-import { generateObjectWithAgent } from "./utils";
+import { ARTICLE_METAS, generateObjectWithAgent } from "./utils";
 
 const mountObservability = (agent) => {
 	agent.onMessage((message: string) => {
@@ -33,38 +47,12 @@ const mountObservability = (agent) => {
 	});
 };
 
-export const baristaMachine = createMachine({
-	initial: "idle",
-	states: {
-		idle: {
-			on: {
-				"barista.makeDrink": {
-					actions: ({ event }) => console.log(event.text),
-					target: "makingDrink",
-				},
-			},
-
-			entry: () => {
-				console.log("idle");
-			},
-		},
-		makingDrink: {
-			on: {
-				"barista.drinkMade": "idle",
-			},
-			entry: ({ event }) => {
-				console.log("!!! makingDrink now", event);
-			},
-		},
-	},
-});
-
 /**
  * Put the dependency inside state machine whenever possible
  * While agent action are functional for composability and testability
  */
 
-export const start = async () => {
+export const planAndWrite = async () => {
 	const TOPICS_ETH = [
 		"Ethereum Research",
 		"Ethereum Community news",
@@ -78,12 +66,9 @@ export const start = async () => {
 	const agentResearcher = createAgent(agentParamsResearcher);
 	const agentAuthor = createAgent(agentParamsAuthor);
 
-	const agentFactChecker = createAgent(agentParamsFactChecker);
-
 	mountObservability(agentCurator);
 	mountObservability(agentEditor);
 	mountObservability(agentResearcher);
-	mountObservability(agentFactChecker);
 
 	const newsActor = createActor(newsAgencyMachine);
 	newsActor.start();
@@ -106,37 +91,40 @@ export const start = async () => {
 		news: items.map(({ value }) => value),
 	});
 
-	const planResults = await planNewsDirection(agentEditor)(news);
+	const planResult = await planNewsDirection(agentEditor)(news);
 
 	/**
 	 * Given the plan, researcher research the internet
 	 */
 
-	for (const articlePlan of planResults?.articlePlans) {
-		console.log("articlePlan", articlePlan);
+	console.log("research internet and write articles");
 
-		const researchResult: z.infer<typeof ResearchResult> =
-			await researchWithWeb(agentResearcher)({
-				...articlePlan,
+	await Promise.all(
+		planResult?.articlePlans.map(async (articlePlan: any, i: number) => {
+			console.log("articlePlan", articlePlan);
+
+			const researchResult: z.infer<typeof ResearchResult> =
+				await researchWithWeb(agentResearcher)({
+					...articlePlan,
+				});
+
+			console.log("researchResult", researchResult);
+
+			console.log("writing articles");
+			await writeAndPersist(agentAuthor)(`article${i + 1}.md`, {
+				topic: articlePlan.topic,
+				editorialDirection: articlePlan.editorialDirection,
+				researchContext: researchResult,
 			});
+		}),
+	);
 
-		console.log("researchResult", researchResult);
-
-		const article = await writeArticle(agentAuthor)({
-			topic: articlePlan.topic,
-			editorialDirection: articlePlan.editorialDirection,
-			researchContext: researchResult,
-		});
-
-		const factCheckResults = await factCheckWithRAG(agentFactChecker)(
-			article,
-			storage,
-		);
-
-		// TODO into state machine
-
-		// factCheckWithRAG(agentFactChecker)()
-	}
+	return planResult?.articlePlans.map((articlePlan: any, i: number) => {
+		return {
+			articlePlan,
+			key: `article${i + 1}.md`,
+		};
+	});
 
 	// persist first, decoupled
 
@@ -157,7 +145,6 @@ export const start = async () => {
 
 	//     // default do nothing
 	//     return {
-	//         // goal: 'make a latte',
 	//         goal: 'create news plan'
 	//     }
 	// });
@@ -166,4 +153,37 @@ export const start = async () => {
 	//     agent,
 	//     actor: newsActor
 	// }
+};
+
+export const reviewAndDeploy = async (soulByName: Record<string, any>) => {
+	const agentFactChecker = createAgent(agentParamsFactChecker);
+	const agentReviewer = createAgent(agentParamsReviewer);
+	const agentEditor = createAgent(agentParamsEditor);
+	const agentManager = createAgent(agentParamsManager);
+
+	mountObservability(agentFactChecker);
+	mountObservability(agentEditor);
+	mountObservability(agentReviewer);
+	mountObservability(agentManager);
+
+	await Promise.all(
+		Object.keys(soulByName).map(async (soulName) => {
+			const soul = soulByName[soulName];
+			// review articles
+			await reviewArticlesAndPersist(agentReviewer)(ARTICLE_METAS, soul);
+		}),
+	);
+
+	await Promise.all(
+		Object.keys(soulByName).map(async (soulName) => {
+			const soul = soulByName[soulName];
+			// review articles
+			await factCheckAndPersist(agentFactChecker)(ARTICLE_METAS, soul);
+		}),
+	);
+
+	// const factCheckResults = await factCheckWithRAG(agentFactChecker)(
+	// 	article,
+	// 	storage,
+	// );
 };

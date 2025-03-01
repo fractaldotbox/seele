@@ -5,7 +5,67 @@ import Header from "../components/Header.astro";
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 import "../styles/globals.css";
+import Article from "@/components/Article.astro";
 
+import { getCollection, getEntry, render } from "astro:content";
+import { truncate } from "@/lib/utils";
+import { marked } from "marked";
+
+const articles = await getCollection("articles");
+
+// Token addresses mapping
+const TOKEN_ADDRESSES = {
+	WETH: "ethereum:0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+	USDT: "ethereum:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+	USDC: "ethereum:0xA0b86991C6218B36c1d19D4a2e9Eb0cE3606EB48",
+	ETH: "coingecko:ethereum",
+	DAI: "ethereum:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+	LINK: "ethereum:0x514910771AF9Ca656af840dff83E8264EcF986CA",
+	UNI: "ethereum:0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+	SHIB: "ethereum:0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",
+	AAVE: "ethereum:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
+	WBTC: "ethereum:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+	MKR: "ethereum:0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
+	COMP: "ethereum:0xc00e94Cb662C3520282E6f5717214004A7f26888",
+	CRO: "ethereum:0xA0b73E1FF0B80914AB6FE0444e6586eB6fFf7eA6",
+	SUSHI: "ethereum:0x6B3595068778DD592e39A122f4f5a5CF09C90fE2",
+	YFI: "ethereum:0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+	BAT: "ethereum:0x0D8775F648430679A709E98d2b0Cb6250d2887EF",
+};
+
+const currentTimestamp = Math.floor(Date.now() / 1000);
+const historicalTimestamp = currentTimestamp - 4 * 60 * 60; // 4 hours ago
+const addresses = Object.values(TOKEN_ADDRESSES).join(",");
+
+// Fetch both current and historical prices
+const [currentResponse, historicalResponse] = await Promise.all([
+	fetch(
+		`https://coins.llama.fi/prices/historical/${currentTimestamp}/${addresses}?searchWidth=4h`,
+	),
+	fetch(
+		`https://coins.llama.fi/prices/historical/${historicalTimestamp}/${addresses}?searchWidth=4h`,
+	),
+]);
+
+const [currentPriceData, historicalPriceData] = await Promise.all([
+	currentResponse.json(),
+	historicalResponse.json(),
+]);
+
+// Process price data
+const tokens = Object.entries(TOKEN_ADDRESSES).map(([symbol, address]) => {
+	const currentPrice = currentPriceData.coins[address]?.price || 0;
+	const historicalPrice = historicalPriceData.coins[address]?.price || 0;
+	const priceChange = historicalPrice
+		? ((currentPrice - historicalPrice) / historicalPrice) * 100
+		: 0;
+
+	return {
+		symbol,
+		price: currentPrice.toFixed(2),
+		change: priceChange.toFixed(2),
+	};
+});
 ---
 
 <Layout>
@@ -22,98 +82,26 @@ import "../styles/globals.css";
     <div class="w-full bg-black text-white py-2 overflow-hidden">
       <div class="ticker-container">
         <div class="ticker-slide flex space-x-12">
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">USDC</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">DAI</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">LINK</span>
-            <span class="ml-2">$7.50</span>
-            <span class="ml-2 text-red-500">▼ 1.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">MATIC</span>
-            <span class="ml-2">$0.90</span>
-            <span class="ml-2 text-green-500">▲ 2.50%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">ETH</span>
-            <span class="ml-2">$1,800.00</span>
-            <span class="ml-2 text-green-500">▲ 0.50%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">USDT</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">BNB</span>
-            <span class="ml-2">$300.00</span>
-            <span class="ml-2 text-red-500">▼ 1.20%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">ADA</span>
-            <span class="ml-2">$0.40</span>
-            <span class="ml-2 text-green-500">▲ 1.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">PEPE</span>
-            <span class="ml-2">$0.01</span>
-            <span class="ml-2 text-green-500">▲ 5.00%</span>
-          </div>
+          {tokens.map(token => (
+            <div class="flex items-center whitespace-nowrap">
+              <span class="font-medium">{token.symbol}</span>
+              <span class="ml-2">${token.price}</span>
+              <span class={`ml-2 ${Number(token.change) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {Number(token.change) >= 0 ? '▲' : '▼'} {Math.abs(Number(token.change))}%
+              </span>
+            </div>
+          ))}
         </div>
         <div class="ticker-slide flex space-x-12 ml-[50%]" aria-hidden="true">
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">USDC</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">DAI</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">LINK</span>
-            <span class="ml-2">$7.50</span>
-            <span class="ml-2 text-red-500">▼ 1.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">MATIC</span>
-            <span class="ml-2">$0.90</span>
-            <span class="ml-2 text-green-500">▲ 2.50%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">ETH</span>
-            <span class="ml-2">$1,800.00</span>
-            <span class="ml-2 text-green-500">▲ 0.50%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">USDT</span>
-            <span class="ml-2">$1.00</span>
-            <span class="ml-2 text-green-500">▲ 0.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">BNB</span>
-            <span class="ml-2">$300.00</span>
-            <span class="ml-2 text-red-500">▼ 1.20%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">ADA</span>
-            <span class="ml-2">$0.40</span>
-            <span class="ml-2 text-green-500">▲ 1.00%</span>
-          </div>
-          <div class="flex items-center whitespace-nowrap">
-            <span class="font-medium">PEPE</span>
-            <span class="ml-2">$0.01</span>
-            <span class="ml-2 text-green-500">▲ 5.00%</span>
-          </div>
+          {tokens.map(token => (
+            <div class="flex items-center whitespace-nowrap">
+              <span class="font-medium">{token.symbol}</span>
+              <span class="ml-2">${token.price}</span>
+              <span class={`ml-2 ${Number(token.change) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {Number(token.change) >= 0 ? '▲' : '▼'} {Math.abs(Number(token.change))}%
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -150,20 +138,15 @@ import "../styles/globals.css";
         {/* Main Content Area */}
         <div class="lg:col-span-8">
           <article class="mb-8">
-            <img src="/sample_image.jpg" alt="Featured Story" class="w-full h-96 object-cover mb-4"/>
-            <h1 class="text-3xl font-bold mb-2">Main Headline Story</h1>
-            <p class="text-gray-600 mb-4">Detailed description of the main story with key points and analysis...</p>
+            <img src={articles?.[0].data?.imgUrl} alt="Article Image" class="w-full h-96 object-cover mb-2"/>
+            <h1 class="text-3xl font-bold mb-2">{articles?.[0].data.title}</h1>
+            <p class="text-gray-600 mb-4">{truncate(articles?.[0].data.content)}</p>
           </article>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Secondary Stories */}
-            {Array.from({ length: 4 }).map((_, i) => (
-              <article class="border-b border-gray-200 pb-4">
-                <h3 class="text-xl font-semibold mb-2">Market Update {i + 1}</h3>
-                <p class="text-gray-600 text-sm">
-                  Key market insights and analysis for today's trading session...
-                </p>
-              </article>
+            {articles.slice(1,5).map((article, i) => (
+              <Article articleKey={article.id}/>
             ))}
           </div>
         </div>
@@ -188,5 +171,4 @@ import "../styles/globals.css";
     </footer>
   </body>
 </html>
-	<Welcome />
 </Layout>

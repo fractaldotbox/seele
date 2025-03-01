@@ -25,6 +25,12 @@ describe(
 		//     console.log('results', results);
 		// });
 
+		it.skip("#createDirectory for new", async () => {
+			const { directoryAddress } = await createDirectory("", undefined);
+			console.log("directoryAddress", directoryAddress);
+
+			// expect(directoryAddress).toEqual(existingAddress);
+		});
 		it("#createDirectory for existing", async () => {
 			const existingAddress = "0x73b6443fF19E7EA934Ae8E4B0dDcf3D899580BE8";
 			const { directoryAddress } = await createDirectory(
@@ -35,7 +41,7 @@ describe(
 			expect(directoryAddress).toEqual(existingAddress);
 		});
 
-		it.only("#uploadFileToDirectory with new directory", async () => {
+		it("#uploadFileToDirectory with new directory", async () => {
 			const ethStorage = await createEthStorage(privateKeyStorage);
 			const existingAddress = "";
 			const { flatDirectory, directoryAddress } = await createDirectory(

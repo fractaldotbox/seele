@@ -3,14 +3,18 @@ import { type Agent, createAgent } from "@statelyai/agent";
 import { cosineSimilarity, embedMany, generateText } from "ai";
 import _ from "lodash";
 import type { Storage } from "unstorage";
-import { an } from "vitest/dist/chunks/reporters.DTtkbAtP.js";
 import z, { string } from "zod";
+import { type ArticleMeta, loadArticles } from "../adapters/utils";
+import { persistWithDirectory } from "../storage";
 import {
 	createEmbeddings,
 	generateObjectWithAgent,
 	queryWithEmbeddings,
 } from "../utils";
-import { NewsFeedItem } from "./editor";
+import { directoryAddressEditor } from "./address-book";
+
+const privateKeyEditor = process.env.PRIVATE_KEY_EDITOR!;
+
 /**
  * Base on data (from polymarket)
  * Detect false information in the article and provide suggestions
@@ -102,8 +106,8 @@ export const identifyClaimWithKeywords =
 	};
 
 export const factCheckWithRAG =
-	(agent: Agent<any, any>) => async (article: string, storage: Storage) => {
-		const claimWithKeywords = await identifyClaimWithKeywords(agent)(article);
+	(agent: Agent<any, any>) => async (content: string, storage: Storage) => {
+		const claimWithKeywords = await identifyClaimWithKeywords(agent)(content);
 
 		console.log("claimWithKeywords:", claimWithKeywords);
 		const relevantNews = await findRelevantInfo(
@@ -112,7 +116,7 @@ export const factCheckWithRAG =
 		);
 
 		const params = createFactCheckPromptParams(
-			article,
+			content,
 			relevantNews.map(({ item }) => item.value.content),
 		);
 
@@ -163,3 +167,45 @@ export const createRAGPrompt = (query: string) => {
 };
 
 // export const
+
+export const factCheckAndPersist =
+	(agent: Agent<any, any>) =>
+	async (articleMetas: ArticleMeta[], storage: any) => {
+		const articles = await loadArticles(articleMetas);
+
+		return await Promise.all(
+			articles.map(async (article, index) => {
+				const factCheckResults = await factCheckWithRAG(agent)(
+					article.content,
+					storage,
+				);
+
+				await persistWithDirectory(
+					{
+						privateKey: privateKeyEditor,
+						directoryAddress: directoryAddressEditor,
+					},
+					{
+						namespace: "factcheck",
+						contentKey: articleMetas[index]!.key.replace(".md", ".json"),
+						content: JSON.stringify(factCheckResults),
+					},
+				);
+			}),
+		);
+
+		// const articles = await loadArticles(articleMetas);
+		// const factCheckResults = await factCheckWithRAG(agent)(content, storage)
+
+		// await persistWithDirectory(
+		// 	{
+		// 		privateKey: privateKeyEditor,
+		// 		directoryAddress: directoryAddressEditor,
+		// 	},
+		// 	{
+		// 		namespace: "factcheck",
+		// 		contentKey: key,
+		// 		content: JSON.stringify(factCheckResults),
+		// 	},
+		// );
+	};

@@ -98,7 +98,10 @@ export const VotingForm = ({
 											<Button
 												type="button"
 												onClick={() => {
-													field.onChange("left");
+													field.onChange(
+														// TODO: change address to agent address
+														"0x6e3eAffd3643dB8FfBE5973A4Ccf64F2F9AA9cfd",
+													);
 													form.handleSubmit(onSubmit)();
 												}}
 												className="flex-1"
@@ -109,7 +112,10 @@ export const VotingForm = ({
 											<Button
 												type="button"
 												onClick={() => {
-													field.onChange("right");
+													field.onChange(
+														// TODO: change address to agent address
+														"0xAaB311758eD38909734a14a4c19ae4BE3b700E61",
+													);
 													form.handleSubmit(onSubmit)();
 												}}
 												className="flex-1"

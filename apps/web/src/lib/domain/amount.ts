@@ -11,26 +11,26 @@ import { formatUnits } from "viem";
  */
 
 export const formatUnitsWithLocale = ({
-  value,
-  exponent = 18,
-  locale,
-  formatOptions,
+	value,
+	exponent = 18,
+	locale,
+	formatOptions,
 }: {
-  value?: bigint;
-  exponent?: number;
-  locale?: Intl.Locale;
-  formatOptions?: Intl.NumberFormatOptions;
+	value?: bigint;
+	exponent?: number;
+	locale?: Intl.Locale;
+	formatOptions?: Intl.NumberFormatOptions;
 }) => {
-  if (value === undefined) {
-    return "";
-  }
-  const e = 10 ** exponent;
+	if (value === undefined) {
+		return "";
+	}
+	const e = 10 ** exponent;
 
-  return formatNumberWithLocale({
-    value: Number(value) / e,
-    locale,
-    formatOptions,
-  });
+	return formatNumberWithLocale({
+		value: Number(value) / e,
+		locale,
+		formatOptions,
+	});
 };
 
 /**
@@ -39,22 +39,22 @@ export const formatUnitsWithLocale = ({
  */
 
 export const formatNumberWithLocale = ({
-  value,
-  locale,
-  formatOptions = {},
+	value,
+	locale,
+	formatOptions = {},
 }: {
-  value: number;
-  locale?: Intl.Locale;
-  formatOptions?: Intl.NumberFormatOptions;
+	value: number;
+	locale?: Intl.Locale;
+	formatOptions?: Intl.NumberFormatOptions;
 }) => {
-  const currency =
-    formatOptions?.style === "currency"
-      ? formatOptions?.currency || "USD"
-      : undefined;
+	const currency =
+		formatOptions?.style === "currency"
+			? formatOptions?.currency || "USD"
+			: undefined;
 
-  return value.toLocaleString(locale, {
-    currency,
-    maximumFractionDigits: formatOptions?.maximumFractionDigits ?? 2,
-    ...formatOptions,
-  });
+	return value.toLocaleString(locale, {
+		currency,
+		maximumFractionDigits: formatOptions?.maximumFractionDigits ?? 2,
+		...formatOptions,
+	});
 };

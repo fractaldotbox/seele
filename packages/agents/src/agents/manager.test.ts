@@ -4,7 +4,11 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { waitFor } from "xstate";
 import { TOPICS_ETH } from "../fixture";
 
-import { directoryAddressAuthor } from "./address-book";
+import { ARTICLE_METAS } from "../utils";
+import {
+	directoryAddressAuthor,
+	directoryAddressManager,
+} from "./address-book";
 import {
 	deployArticles,
 	pullAttestations,
@@ -42,22 +46,9 @@ describe(
 
 		it.only("verify and deploy artilces", async () => {
 			const attestations = await pullAttestations();
-			const articleMetas = [
-				{
-					key: "article1.md",
-					directoryAddress: directoryAddressAuthor,
-				},
-				{
-					key: "article2.md",
-					directoryAddress: directoryAddressAuthor,
-				},
-				// {
-				// 	key: "article3.md",
-				// 	directoryAddress: directoryAddressAuthor,
-				// },
-			];
-			await verifyAndDeploy(attestations, articleMetas);
+
+			await verifyAndDeploy(attestations!, ARTICLE_METAS);
 		});
 	},
-	60 * 1000,
+	5 * 60 * 1000,
 );

@@ -192,7 +192,8 @@ export default function Home() {
             };
           }> => {
             const result = await signAttestation({
-              recipient: address as Address,
+              // THIS WILL BE AGENT ADDRESS
+              recipient: data as Address,
               data: [
                 {
                   name: "voteFor",

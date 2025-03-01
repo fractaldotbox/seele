@@ -8,8 +8,8 @@ import "../styles/globals.css";
 import Article from "@/components/Article.astro";
 
 import { getCollection, getEntry, render } from "astro:content";
-import { marked } from "marked";
 import { truncate } from "@/lib/utils";
+import { marked } from "marked";
 const articles = await getCollection("articles");
 ---
 

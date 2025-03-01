@@ -14,11 +14,9 @@ import {
 	loadArticles,
 } from "../adapters/utils";
 import { persistWithDirectory } from "../storage";
-import { addressEditor } from "./address-book";
+import { addressEditor, directoryAddressManager } from "./address-book";
 
 const privateKeyManager = process.env.PRIVATE_KEY_MANAGER!;
-
-const directoryAddress = process.env.DIRECTORY_ADDRESS_MANAGER!;
 
 export const agentParamsManager = {
 	name: "planner",
@@ -78,7 +76,7 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 		await persistWithDirectory(
 			{
 				privateKey: privateKeyManager,
-				directoryAddress,
+				directoryAddress: directoryAddressManager,
 			},
 			{
 				// namespace: "article",
@@ -154,6 +152,7 @@ export const verifyAndDeploy = async (
 	attestations: Attestation[],
 	articlesMeta: ArticleMeta[],
 ) => {
+	// original author directory address
 	for (let i = 0; i < articlesMeta.length; i++) {
 		const { key, directoryAddress } = articlesMeta[i]!;
 

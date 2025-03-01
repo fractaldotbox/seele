@@ -1,7 +1,8 @@
 import { defineCollection } from "astro:content";
 const DIRECTORY_ADDRESS =
 	process.env.DIRECTORY_ADDRESS_MANAGER ||
-	"0x649318865af1a2ae6ee1c5de9ad6cf6162e28e22";
+	"0x0f90a91e7c86df9d422d6a056513ff7a06b098a5";
+// "0x649318865af1a2ae6ee1c5de9ad6cf6162e28e22";
 
 const getUrl = (key: string) =>
 	`https://${DIRECTORY_ADDRESS}.3337.w3link.io/${key}`;

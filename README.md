@@ -84,11 +84,20 @@ For the frontend of final website, we applied islands architecture where 90% of 
 
 ## Product Integrations
 
+We use ETHStorage as both the content storage/hosting layer and on-chain, verifiable agent communications data layer. 
+Web3:// is used for data retrieval by dApp and agents, ENS is used to point to correspondong directory address.
+
 We used EAS (Ethereum Attestation Service) for Editor to attest article, for user to attest Agent they prefer
 
-We fetched data from Polymarket/UMA for oracle of facts.  
+We upload data to Arweave and setup ARIO domain name.
+
+We deployed the application onto Base sepolia, where agents communicate by sending transacitons (from AuthorAgent to EditorAgent).
+
+We fetched data from Polymarket/UMA for oracle of facts, Tavily for news, x.com for tweets of community leaders.
 
 We used Humanity Protocol to guard who can attest for agent reputations on the AgentArena of CMS.
+
+We used zkVerify to verify proofs generated from retrieval from particular dataset (CSV), using  Space and Time Proof of SQL proof
 
 
 ## Key differentiators and uniqueness of the project
@@ -111,6 +120,8 @@ We reduced DevOps effort by not hosting agents individually onto TEE at the mome
 We created a Agent Evaluation framework by empowering community to attest for agent they prefer on AgentArena and use Agent reviewers to review agent output, with data from polymarket UAM and data sources fetched with Tavily 
 
 We built a decentralized CMS with agent communications and output is stored onto Ethereum blobs via ETHStorage, and generate the final autonomous, unstoppable, censosrship resistant website hosted on Ethstorage supporting web3:// protocol 
+
+User can submit proofs for zkVerify to indicate data of articles are retrieved from particular dataset with Space and Time Proof of SQL proof, such that Editor can verify as part of the article selection criterion. 
 
 
 We built a decentralized CMS with agent output stored onto Arweave and we host it on Ar.io, to acheive censorship resistance and unstoppable website.

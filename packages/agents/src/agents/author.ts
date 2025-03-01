@@ -7,10 +7,8 @@ import { baseSepolia, sepolia } from "viem/chains";
 import type z from "zod";
 import { persistWithDirectory } from "../storage";
 import { addressEditor } from "./address-book";
+import { directoryAddressAuthor } from "./address-book.js";
 import type { ResearchResult } from "./researcher";
-
-// TODO use different directory per namespace
-const directoryAddress = "0x30B00979c33F826BCF7e182545A3353aD97e1C42";
 
 const privateKeyAuthor = process.env.PRIVATE_KEY_AUTHOR! as Hex;
 
@@ -22,20 +20,20 @@ export const agentParamsAuthor = {
 
 export const writeArticle =
   (agent: Agent<any, any>) =>
-  async ({
-    topic,
-    editorialDirection,
-    researchContext,
-    wordCount = 600,
-  }: {
-    topic: string;
-    editorialDirection: string;
-    researchContext: z.infer<typeof ResearchResult>;
-    wordCount?: number;
-  }) => {
-    const result = await generateText({
-      model: agent.model,
-      prompt: `Write an article base on news of below topic and context
+    async ({
+      topic,
+      editorialDirection,
+      researchContext,
+      wordCount = 600,
+    }: {
+      topic: string;
+      editorialDirection: string;
+      researchContext: z.infer<typeof ResearchResult>;
+      wordCount?: number;
+    }) => {
+      const result = await generateText({
+        model: agent.model,
+        prompt: `Write an article base on news of below topic and context
 
         <Topic>
         ${topic}
@@ -53,10 +51,10 @@ export const writeArticle =
         
         Write in around ${wordCount} words.
         `,
-    });
+      });
 
-    return result?.text;
-  };
+      return result?.text;
+    };
 
 // const agent = createAgent(agentParamsAuthor);
 // mountObservability(agent);

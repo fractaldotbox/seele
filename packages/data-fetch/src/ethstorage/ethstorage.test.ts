@@ -25,7 +25,7 @@ describe(
 		//     console.log('results', results);
 		// });
 
-		it.skip("#createDirectory for new", async () => {
+		it.only("#createDirectory for new", async () => {
 			const { directoryAddress } = await createDirectory("", undefined);
 			console.log("directoryAddress", directoryAddress);
 

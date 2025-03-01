@@ -73,8 +73,6 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 	for (let i = 0; i < articles.length; i++) {
 		const article = articles[i]!;
 
-		let imageResults;
-
 		const titleResults = await generateText({
 			model: agentParamsManager.model,
 			prompt: `Summarize title for the article, do not include the word title in it.
@@ -90,17 +88,15 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
                 `,
 		});
 
-		if (i === 0) {
-			imageResults = await generateImage({
-				model: openai.image("dall-e-3"),
-				prompt: `
+		const imageResults = await generateImage({
+			model: openai.image("dall-e-3"),
+			prompt: `
 				No Text, No Caption.
 				News cover image for this title:
 				${titleResults?.text}
 				`,
-				// size: '512x512'
-			});
-		}
+			// size: '512x512'
+		});
 
 		await persistWithDirectory(
 			{
@@ -124,7 +120,6 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 				contentKey: article.key.replace(".md", ".json"),
 				content: JSON.stringify({
 					title: titleResults?.text,
-					// image: imageResults?.image?.base64,
 				}),
 			},
 		);

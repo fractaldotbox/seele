@@ -7,16 +7,27 @@ SEELE is a CMS to build Autonomous website owend by agents, governed by communit
 
 ## The problem it solves
 
-Agents are powerful than ever. We could empower agents to trade on Defi, but that comes at risk of agents trading on fake news, or compromised by various forms of data posioning. Oracles today are mostly limited to quantiative data (i.e. prices), and we yet to see well integrated solutions on "info-defense".
+Agents are powerful than ever. However, empowering agents to trade on Defi comes at risk of agents trading on misinformation, or compromised by various forms of data posioning. Oracles today are mostly limited to quantiative data (i.e. prices), and with increasing concern on deepfakes we're yet to see well integrated solutions on ["info-defense"](https://vitalik.eth.limo/general/2023/11/27/techno_optimism.html#info). 
 
-We also see dApps as the weakest link of security, often lack of decentralization. Recent hacks at Bybit illustrated the risk of relying on trusted party for website infrastructure (CDN/DNS/JS).  
+We also see dApps as the weakest link of security, often due to lack of decentralization. Recent hack with billions loss illustrated the risk of relying on trusted party for website infrastructure (CDN/DNS/JS).  
 
-There is a new possibility for trustless website ownership via agents, meanwhile how could we govern that as a community?
+AI provides new possibilites to create autonomous, trustless dApp with full control and ownership by agents, meanwhile how could we govern that as a community?
+
+In our Demo, we built an Autnomous news agency that is curated, edited, reviewed, fact-checked and deployed by agents. Agents are governed with "SEELE" (Soul) of community.
 
 SEELE is a CMS for community to orchestrate agents to build autonomous, decntralized websites.
-Base on swarm of agents, AI will curate, write, review news. It incorporates polymarket for fact-checking, and review articles with Agents impersonating personality of community leaders. Agents is then able to  deploy a censorships resistantance, unstoppable website autonomously. Output and communications messages of are written on-chain for transparency and interpretability. 
 
-Community member is able to guide the agents by selecting topics of interest and training data of AI reviewers (e.g. with vitalik's twitter), and attest content they prefer on AgentArena, similar to lmarena.
+With a swarm of agents communicating on-chain, Curator and Editor will search of latest news and plan for news outline with editorial direction. 
+
+Agents and Human are welcomed to contribute and submit articles with proofs on facts / retrieval for review by sending transaction to Editor. We showcase by ResearchAgent with internet access supporting AuthorAgent to write on articles.
+
+Reviewers impersonating personality of community leaders and FactCheck Agent will review articles with RAG with data on polymarket oracle and trusted domains. Editor Agent will then also take into consideration of agent reputation and attest for greenlight.
+
+ManagerAgent is then able to verify proofs and deploy a censorships resistantance, unstoppable website autonomously. Output and communications messages of are written on-chain for transparency and interpretability. 
+
+CMS access is token gated by members. Verified community member is able to guide the agents by selecting topics of interest and training data of AI reviewers (e.g. with vitalik's twitter), and attest content they prefer on AgentArena, similar to lmarena.ai
+
+If LLM is "compressing the Internet", we want to enable community to "compress the Soul" to orchestrate agents and achieve decentrailization. 
 
 
 ## User Interaction and Data Flow
@@ -79,4 +90,13 @@ We reduced DevOps effort by not hosting agents individually onto TEE at the mome
 
 We created a Agent Evaluation framework by empowering community to attest for agent they prefer on AgentArena and use Agent reviewers to review agent output, with data from polymarket UAM and data sources fetched with Tavily 
 
-We built a decentralized CMS with agent communications and output stored onto Ethereum blobs via ETHStorage, and generate the final autonomous, unstoppable, censosrship resistant website hosted on Ethstorage supporting web3:// protocol 
+We built a decentralized CMS with agent communications and output is stored onto Ethereum blobs via ETHStorage, and generate the final autonomous, unstoppable, censosrship resistant website hosted on Ethstorage supporting web3:// protocol 
+
+
+We built a decentralized CMS with agent output stored onto Arweave and we host it on Ar.io, to acheive censorship resistance and unstoppable website.
+
+
+## Additional Features
+
+- Disclaimer: Team has built open source dev tools [dDevKit](https://github.com/fractaldotbox/geist-ddev-kit) and this project we dogfood 2 compoonents related to attestations
+- Otherwise all codebase is new 

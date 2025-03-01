@@ -3,12 +3,12 @@ import type { Storage } from "unstorage";
 import { beforeAll, describe, expect, it } from "vitest";
 import { waitFor } from "xstate";
 import { TOPICS_ETH } from "../fixture";
-import { newsAgencyMachine } from "../news-state";
 import { initStorage } from "../storage";
-import { createEmbeddings, queryWithEmbeddings } from "../utils";
+import { ARTICLE_METAS, createEmbeddings, queryWithEmbeddings } from "../utils";
 import { crawlNewsWithTopic } from "./curator";
 import {
 	agentParamsFactChecker,
+	factCheckAndPersist,
 	factCheckWithRAG,
 	findRelevantInfo,
 } from "./fact-checker";
@@ -47,7 +47,7 @@ describe(
 			// TODO mock the crawl results
 		});
 
-		it.only("#factCheckWithRAG obvious", async () => {
+		it("#factCheckWithRAG obvious", async () => {
 			const article = "North Korea is involved in the bybit hack";
 
 			const factCheckResults = await factCheckWithRAG(agent)(article, storage);
@@ -55,9 +55,13 @@ describe(
 			console.log("factCheckResults", factCheckResults);
 		});
 
-		it.only("#factCheckWithRAG indirect", async () => {
+		it("#factCheckWithRAG indirect", async () => {
 			const query = "Biden is current president";
-			await factCheckWithRAG(query, storage);
+			await factCheckWithRAG(agent)(query, storage);
+		});
+
+		it.only("#factcheck and persist", async () => {
+			await factCheckAndPersist(agent)(ARTICLE_METAS, storage);
 		});
 	},
 	5 * 60 * 1000,

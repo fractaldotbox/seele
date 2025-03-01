@@ -1,3 +1,4 @@
+import { openai } from "@ai-sdk/openai";
 import {
 	type Attestation,
 	getUIDsFromAttestReceipt,
@@ -7,13 +8,23 @@ import { gql, rawRequest } from "graphql-request";
 import _ from "lodash";
 import type { Address } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createEthstorageArticleUrl } from "../adapters/utils";
+import {
+	type ArticleMeta,
+	createEthstorageArticleUrl,
+	loadArticles,
+} from "../adapters/utils";
 import { persistWithDirectory } from "../storage";
 import { addressEditor } from "./address-book";
 
 const privateKeyManager = process.env.PRIVATE_KEY_MANAGER!;
 
 const directoryAddress = process.env.DIRECTORY_ADDRESS_MANAGER!;
+
+export const agentParamsManager = {
+	name: "planner",
+	model: openai("gpt-4-turbo"),
+	events: {},
+};
 
 export const GetAttestationByParams = gql`
   query AttestationByParameters($where: AttestationWhereInput) {
@@ -58,22 +69,21 @@ export const searchAttestationsWithParams = async (
 };
 
 export const deployArticles = async (articleMetas: ArticleMeta[]) => {
-	for (let i = 0; i < articleMetas.length; i++) {
-		const meta = articleMetas[i]!;
+	const articles = await loadArticles(articleMetas);
 
-		const url = createEthstorageArticleUrl(meta.directoryAddress, meta.key);
-		const content = await fetch(url).then((response) => response.text());
+	for (let i = 0; i < articles.length; i++) {
+		const article = articles[i]!;
 
-		console.log("content", content);
+		console.log("content", article.content);
 		await persistWithDirectory(
 			{
 				privateKey: privateKeyManager,
 				directoryAddress,
 			},
 			{
-				// namespace: "community1",
-				contentKey: meta.key,
-				content,
+				// namespace: "article",
+				contentKey: article.key,
+				content: article.content,
 			},
 		);
 	}
@@ -138,11 +148,6 @@ export const verifyAttestation = async (
 		console.error("EAS verification error:", error);
 		return false;
 	}
-};
-
-export type ArticleMeta = {
-	key: string;
-	directoryAddress: string;
 };
 
 export const verifyAndDeploy = async (

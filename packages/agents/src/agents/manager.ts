@@ -69,7 +69,7 @@ export const searchAttestationsWithParams = async (
 
 export const deployArticles = async (articleMetas: ArticleMeta[]) => {
 	const articles = await loadArticles(articleMetas);
-
+	console.log("deploying articles", articles.length);
 	for (let i = 0; i < articles.length; i++) {
 		const article = articles[i]!;
 
@@ -88,7 +88,6 @@ export const deployArticles = async (articleMetas: ArticleMeta[]) => {
                 `,
 		});
 
-		console.log("content", article.content);
 		await persistWithDirectory(
 			{
 				privateKey: privateKeyManager,

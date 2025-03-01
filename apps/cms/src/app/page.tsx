@@ -21,9 +21,7 @@ export default function Home() {
 			<main className="flex flex-col gap-8 row-start-2 items-center w-full max-w-6xl mx-auto">
 				{/* Hero Section */}
 				<div className="text-center mb-12">
-					<h1 className="text-5xl font-bold mb-4 text-foreground">
-						SEELE
-					</h1>
+					<h1 className="text-5xl font-bold mb-4 text-foreground">SEELE</h1>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
 						Giving DAOs a soul through AI-powered content generation and
 						representation

@@ -20,217 +20,217 @@
  */
 
 import {
-  resolveChainById,
-  resolveProductionChain,
+	resolveChainById,
+	resolveProductionChain,
 } from "@/lib/domain/chain/chain-resolver";
 import { asCaip19Id } from "@/lib/domain/token/multi-chain";
 import type { TokenSelector } from "@/lib/domain/token/token";
+import { asTrustWalletChainName } from "@/lib/trustwallet-chain";
 // import { useReadContracts } from "wagmi";
 import { type Config, readContracts } from "@wagmi/core";
 import { useEffect, useState } from "react";
 import { type Address, type Chain, erc20Abi, getAddress } from "viem";
-import { asTrustWalletChainName } from "@/lib/trustwallet-chain";
 
 export type TokenInfo = {
-  address: Address;
-  imageUrl?: string;
-  decimals: number;
-  symbol: string;
-  name: string;
+	address: Address;
+	imageUrl?: string;
+	decimals: number;
+	symbol: string;
+	name: string;
 };
 
 /**
  * trustwallet/assets does not contains most testnet, always fallback to mainnet
  */
 export const getTrustWalletIconUrl = (chain: Chain, address?: Address) => {
-  const productionChain = resolveProductionChain(chain);
+	const productionChain = resolveProductionChain(chain);
 
-  const twChainName = asTrustWalletChainName(productionChain);
+	const twChainName = asTrustWalletChainName(productionChain);
 
-  const ROOT =
-    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains";
+	const ROOT =
+		"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains";
 
-  if (!address) {
-    return `${ROOT}/${twChainName}/info/logo.png`;
-  }
+	if (!address) {
+		return `${ROOT}/${twChainName}/info/logo.png`;
+	}
 
-  return `${ROOT}/${twChainName}/assets/${getAddress(address)}/logo.png`;
+	return `${ROOT}/${twChainName}/assets/${getAddress(address)}/logo.png`;
 };
 
 function chunk<T>(arr: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size),
-  );
+	return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+		arr.slice(i * size, i * size + size),
+	);
 }
 
 export const fetchTokenInfoBulkAction =
-  (config: Config, chainId: number) => async (tokens: TokenSelector[]) => {
-    const selectors = [
-      {
-        functionName: "name",
-      },
-      {
-        functionName: "decimals",
-      },
-      {
-        functionName: "symbol",
-      },
-      {
-        functionName: "totalSupply",
-      },
-    ];
-    const results = await readContracts(config, {
-      batchSize: 10,
-      allowFailure: false,
-      contracts: tokens.flatMap((token) => {
-        const address = token.address as Address;
+	(config: Config, chainId: number) => async (tokens: TokenSelector[]) => {
+		const selectors = [
+			{
+				functionName: "name",
+			},
+			{
+				functionName: "decimals",
+			},
+			{
+				functionName: "symbol",
+			},
+			{
+				functionName: "totalSupply",
+			},
+		];
+		const results = await readContracts(config, {
+			batchSize: 10,
+			allowFailure: false,
+			contracts: tokens.flatMap((token) => {
+				const address = token.address as Address;
 
-        return selectors.map((selector) => ({
-          address,
-          abi: erc20Abi,
-          ...selector,
-        }));
-      }),
-    });
+				return selectors.map((selector) => ({
+					address,
+					abi: erc20Abi,
+					...selector,
+				}));
+			}),
+		});
 
-    const chunkedResults = chunk(results, 4).reduce((acc, chunk, idx) => {
-      const [name, decimals, symbol, totalSupply] = chunk;
-      const address = tokens[idx % 4]!.address;
+		const chunkedResults = chunk(results, 4).reduce((acc, chunk, idx) => {
+			const [name, decimals, symbol, totalSupply] = chunk;
+			const address = tokens[idx % 4]!.address;
 
-      const caip19Id = asCaip19Id({ chainId, address });
+			const caip19Id = asCaip19Id({ chainId, address });
 
-      const chain = resolveChainById(chainId);
-      const imageUrl = chain
-        ? getTrustWalletIconUrl(chain, address as Address)
-        : "";
+			const chain = resolveChainById(chainId);
+			const imageUrl = chain
+				? getTrustWalletIconUrl(chain, address as Address)
+				: "";
 
-      console.log("imageUrl", imageUrl);
-      return {
-        // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-        ...acc,
-        [caip19Id]: {
-          address,
-          name,
-          imageUrl,
-          decimals,
-          symbol,
-          totalSupply,
-        },
-      };
-    }, {});
+			console.log("imageUrl", imageUrl);
+			return {
+				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+				...acc,
+				[caip19Id]: {
+					address,
+					name,
+					imageUrl,
+					decimals,
+					symbol,
+					totalSupply,
+				},
+			};
+		}, {});
 
-    return chunkedResults as Record<string, TokenInfo>;
-  };
+		return chunkedResults as Record<string, TokenInfo>;
+	};
 
 // For now only current chain
 
 export const useTokenInfoBulk = ({
-  chainId,
-  tokens,
-  config,
+	chainId,
+	tokens,
+	config,
 }: {
-  chainId: number;
-  tokens: TokenSelector[];
-  config: Config;
+	chainId: number;
+	tokens: TokenSelector[];
+	config: Config;
 }) => {
-  const [tokenInfo, setTokenInfo] = useState<any>(undefined);
+	const [tokenInfo, setTokenInfo] = useState<any>(undefined);
 
-  // turn on multicall batch add options to bulk by wagmi
+	// turn on multicall batch add options to bulk by wagmi
 
-  useEffect(() => {
-    (async () => {
-      if (tokens) {
-        const byCapid19Id = await fetchTokenInfoBulkAction(
-          config,
-          chainId,
-        )(tokens);
+	useEffect(() => {
+		(async () => {
+			if (tokens) {
+				const byCapid19Id = await fetchTokenInfoBulkAction(
+					config,
+					chainId,
+				)(tokens);
 
-        setTokenInfo(byCapid19Id);
-      }
-    })();
-  }, [tokens, chainId, config]);
+				setTokenInfo(byCapid19Id);
+			}
+		})();
+	}, [tokens, chainId, config]);
 
-  return {
-    data: tokenInfo,
-  };
+	return {
+		data: tokenInfo,
+	};
 };
 
 export const useTokenInfo = ({
-  address,
-  chainId,
-  config,
+	address,
+	chainId,
+	config,
 }: {
-  address?: Address;
-  chainId: number;
-  config: Config;
+	address?: Address;
+	chainId: number;
+	config: Config;
 }) => {
-  const chain = resolveChainById(chainId);
-  const imageUrl = chain ? getTrustWalletIconUrl(chain, address) : "";
+	const chain = resolveChainById(chainId);
+	const imageUrl = chain ? getTrustWalletIconUrl(chain, address) : "";
 
-  const { nativeCurrency } = chain || {};
+	const { nativeCurrency } = chain || {};
 
-  const [tokenInfo, setTokenInfo] = useState<any>(undefined);
+	const [tokenInfo, setTokenInfo] = useState<any>(undefined);
 
-  const fetchTokenInfo = async (address: Address) => {
-    const results = await readContracts(config, {
-      allowFailure: false,
-      contracts: [
-        {
-          address,
-          abi: erc20Abi,
-          functionName: "decimals",
-        },
-        {
-          address,
-          abi: erc20Abi,
-          functionName: "name",
-        },
-        {
-          address,
-          abi: erc20Abi,
-          functionName: "symbol",
-        },
-        {
-          address,
-          abi: erc20Abi,
-          functionName: "totalSupply",
-        },
-      ],
-    });
+	const fetchTokenInfo = async (address: Address) => {
+		const results = await readContracts(config, {
+			allowFailure: false,
+			contracts: [
+				{
+					address,
+					abi: erc20Abi,
+					functionName: "decimals",
+				},
+				{
+					address,
+					abi: erc20Abi,
+					functionName: "name",
+				},
+				{
+					address,
+					abi: erc20Abi,
+					functionName: "symbol",
+				},
+				{
+					address,
+					abi: erc20Abi,
+					functionName: "totalSupply",
+				},
+			],
+		});
 
-    if (results) {
-      const [decimals, name, symbol, totalSupply] = results;
-      return {
-        decimals,
-        name,
-        symbol,
-        totalSupply,
-        imageUrl,
-      };
-    }
-  };
+		if (results) {
+			const [decimals, name, symbol, totalSupply] = results;
+			return {
+				decimals,
+				name,
+				symbol,
+				totalSupply,
+				imageUrl,
+			};
+		}
+	};
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    (async () => {
-      if (address) {
-        const tokenInfo = await fetchTokenInfo(address);
-        setTokenInfo(tokenInfo);
-      }
-    })();
-  }, [address]);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		(async () => {
+			if (address) {
+				const tokenInfo = await fetchTokenInfo(address);
+				setTokenInfo(tokenInfo);
+			}
+		})();
+	}, [address]);
 
-  if (!address) {
-    const data = {
-      imageUrl,
-      ...nativeCurrency,
-    };
-    return {
-      data,
-    };
-  }
+	if (!address) {
+		const data = {
+			imageUrl,
+			...nativeCurrency,
+		};
+		return {
+			data,
+		};
+	}
 
-  return {
-    data: tokenInfo,
-  };
+	return {
+		data: tokenInfo,
+	};
 };

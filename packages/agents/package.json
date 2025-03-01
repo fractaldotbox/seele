@@ -9,7 +9,8 @@
 		"generate:component": "turbo gen react-component",
 		"check-types": "tsc --noEmit",
 		"test": "vitest",
-		"build:soul": "tsx src/scripts/souls.mts"
+		"build:soul": "tsx src/scripts/souls.mts",
+		"test:zkverify": "vitest run zkverify"
 	},
 	"devDependencies": {
 		"@seele/access-gate": "workspace:*",
@@ -42,6 +43,7 @@
 		"viem": "2.23.5",
 		"vitest": "^3.0.6",
 		"xstate": "^5.19.2",
+		"zkverifyjs": "^0.6.0",
 		"zod": "^3.24.2"
 	}
 }

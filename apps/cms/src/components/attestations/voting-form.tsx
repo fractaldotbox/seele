@@ -19,7 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { Address } from "viem";
 import { z } from "zod";
-import { useState } from "react";
 
 // TODO dynamic enough to generate fields
 // now focus on sdk part
@@ -42,8 +41,6 @@ export const VotingForm = ({
   signAttestation,
   isDisabled,
 }: VotingFormParams) => {
-  const [isAttesting, setIsAttesting] = useState(false);
-
   const formSchema = z.object({
     voteFor: z.string(),
   });
@@ -55,39 +52,38 @@ export const VotingForm = ({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setIsAttesting(true);
-      const { uids, txnReceipt } = await signAttestation(values.voteFor);
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    signAttestation(values.voteFor).then(
+      ({
+        uids,
+        txnReceipt,
+      }: {
+        uids: Address[];
+        txnReceipt: { transactionHash: `0x${string}` };
+      }) => {
+        console.log("uids", uids);
 
-      const [uid] = uids;
-      const url = getEasscanAttestationUrl(chainId, uid, isOffchain);
+        const [uid] = uids;
+        const url = getEasscanAttestationUrl(chainId, uid, isOffchain);
 
-      console.log({ uid, url });
-
-      toast({
-        title: "Voting success",
-        description: `attested ${txnReceipt?.transactionHash.slice(0, 6)}...${txnReceipt?.transactionHash.slice(-4)}`,
-        action: (
-          <ToastAction
-            altText="View on EASSCAN"
-            onClick={() => {
-              window.open(url, "_blank");
-            }}
-          >
-            View on EASSCAN
-          </ToastAction>
-        ),
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to submit vote",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAttesting(false);
-    }
+        toast({
+          title: "Voting success",
+          description: `attested ${txnReceipt?.transactionHash}`,
+          action: (
+            <ToastAction altText="View on EASSCAN">
+              <a
+                target={`_blank`}
+                href={url}
+                rel="noreferrer"
+                className="text-blue-500 cursor-pointer hover:underline"
+              >
+                View on EASSCAN
+              </a>
+            </ToastAction>
+          ),
+        });
+      },
+    );
   }
 
   return (
@@ -108,27 +104,29 @@ export const VotingForm = ({
                         type="button"
                         onClick={() => {
                           field.onChange(
+                            // TODO: change address to agent address
                             "0x30B00979c33F826BCF7e182545A3353aD97e1C42",
                           );
                           form.handleSubmit(onSubmit)();
                         }}
                         className="flex-1"
-                        disabled={isDisabled || isAttesting}
+                        disabled={isDisabled}
                       >
-                        {isAttesting ? "Voting..." : "Version A ⬅️"}
+                        Version A ⬅️
                       </Button>
                       <Button
                         type="button"
                         onClick={() => {
                           field.onChange(
+                            // TODO: change address to agent address
                             "0xAaB311758eD38909734a14a4c19ae4BE3b700E61",
                           );
                           form.handleSubmit(onSubmit)();
                         }}
                         className="flex-1"
-                        disabled={isDisabled || isAttesting}
+                        disabled={isDisabled}
                       >
-                        {isAttesting ? "Voting..." : "Version B ➡️"}
+                        Version B ➡️
                       </Button>
                     </div>
                   </FormControl>

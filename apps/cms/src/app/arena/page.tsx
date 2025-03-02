@@ -195,8 +195,8 @@ export default function Home() {
               data: [
                 {
                   name: "voteFor",
-                  value: data,
                   type: "string",
+                  value: data,
                 },
               ],
               time: BigInt(Date.now()),

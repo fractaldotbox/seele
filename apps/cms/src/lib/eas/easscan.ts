@@ -2,24 +2,24 @@ import { EAS_CONFIG_BY_CHAIN_ID } from "@/lib/eas/config";
 import type { Address } from "viem";
 
 export const getEasscanEndpoint = (chainId: number) => {
-	return EAS_CONFIG_BY_CHAIN_ID[chainId]?.easscanUrl;
+  return EAS_CONFIG_BY_CHAIN_ID[chainId]?.easscanUrl;
 };
 
 export const getEasscanAttestationUrl = (
-	chainId: number,
-	uid: string,
-	isOffchain: boolean,
+  chainId: number,
+  uid: string,
+  isOffchain: boolean,
 ) => {
-	if (isOffchain) {
-		return `${getEasscanEndpoint(chainId)}/offchain/attestation/view/${uid}`;
-	}
-	return `${getEasscanEndpoint(chainId)}`;
+  if (isOffchain) {
+    return `${getEasscanEndpoint(chainId)}/offchain/attestation/view/${uid}`;
+  }
+  return `${getEasscanEndpoint(chainId)}/attestation/view/${uid}`;
 };
 
 export const getEasscanAddressUrl = (chainId: number, address: Address) => {
-	return `${getEasscanEndpoint(chainId)}/address/${address}`;
+  return `${getEasscanEndpoint(chainId)}/address/${address}`;
 };
 
 export const getEasscanSchemaUrl = (chainId: number, schemaId: string) => {
-	return `${getEasscanEndpoint(chainId)}/schema/view/${schemaId}`;
+  return `${getEasscanEndpoint(chainId)}/schema/view/${schemaId}`;
 };
